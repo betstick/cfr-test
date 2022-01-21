@@ -1,0 +1,3 @@
+[submodule "lib/cfromreader"]
+	path = lib/cfromreader
+	url = https://github.com/betstick/cfromreader
