@@ -1,5 +1,6 @@
 #include "../lib/cfromreader/cfr.hpp"
 #include <signal.h>
+#include <errno.h>
 
 using namespace cfr;
 
@@ -15,15 +16,23 @@ int main()
 		"../DATA/dvdbnd3.bhd5"*/
 	};
 
-	FILE* dvdbndPtr;
-	BHD5_1* bhd5;
 	std::unordered_map<int32_t, BHD5_1::FileHeader> hashMap;
+	errno = 0;
 
 	for(int i = 0; i < dvdbndPathList.size(); i++)
 	{
-		dvdbndPtr = fopen(dvdbndPathList[i].c_str(),"rb");
-		bhd5 = new BHD5_1(dvdbndPtr);
+		FILE* dvdbndPtr = fopen(dvdbndPathList[i].c_str(),"rb");
+		if (errno != 0)
+		{
+			printf("errno:%i\n", errno);
+			perror("Failed to open DVDBND!\n");
+			exit(1);
+		}
+		BHD5_1* bhd5 = new BHD5_1(dvdbndPtr);
 		hashMap.insert(bhd5->hashMap.begin(),bhd5->hashMap.end());
+
+		fclose(dvdbndPtr);
+		free(bhd5);
 	}
 	
 	//printf("hashMap size: %i\n",hashMap.size());
