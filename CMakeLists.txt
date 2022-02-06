@@ -8,9 +8,9 @@ set(BIN_DIR "${CMAKE_SOURCE_DIR}/bin")
 
 include(GNUInstallDirs)
 
-#find_package(ZLIB REQUIRED)
-#include_directories(${ZLIB_INCLUDE_DIRS})
-#link_libraries(${ZLIB_LIBRARIES})
+find_package(ZLIB REQUIRED)
+include_directories(${ZLIB_INCLUDE_DIRS})
+link_libraries(${ZLIB_LIBRARIES})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
