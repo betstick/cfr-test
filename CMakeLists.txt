@@ -16,6 +16,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 
 if(BUILD STREQUAL "debug")
+	set(BUILD "debug")
 	#enable GDB and disable all optimizations
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb -O0 -g")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ggdb -O0 -g")
@@ -35,7 +36,6 @@ else()
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
 	message(STATUS "Using release mode...")
 endif()
-unset(BUILD CACHE)
 
 add_subdirectory(lib/cfromreader)
 add_subdirectory(src)

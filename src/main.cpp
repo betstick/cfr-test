@@ -6,7 +6,6 @@ using namespace cfr;
 
 int main()
 {
-	
 	std::unordered_map<std::string, int32_t> pathMap = createPathMap(getFileList("../src/ds_ptde.text",ds_ptde));
 
 	std::vector<std::string> dvdbndPathList = {
@@ -21,13 +20,8 @@ int main()
 
 	for(int i = 0; i < dvdbndPathList.size(); i++)
 	{
-		FILE* dvdbndPtr = fopen(dvdbndPathList[i].c_str(),"rb");
-		if (errno != 0)
-		{
-			printf("errno:%i\n", errno);
-			perror("Failed to open DVDBND!\n");
-			exit(1);
-		}
+		FILE* dvdbndPtr = v_fopen(dvdbndPathList[i].c_str(),"rb");
+
 		BHD5_1* bhd5 = new BHD5_1(dvdbndPtr);
 		hashMap.insert(bhd5->hashMap.begin(),bhd5->hashMap.end());
 
@@ -81,15 +75,8 @@ int main()
 	//printf("flver.dummy[8].color[0]:%i\n",flver->dummies[8].color[0]);
 	//printf("flver.bones[0].rot_x[0]:%f\n",flver->bones[0].rot_x);
 
-	printf("flver.vertexbuffers[0].vertices[0]:");
-	for(int i = 0; i < 40; i ++)
-	{
-		char c = 'x';
-		memcpy(&c,&flver->vertexBuffers[0].vertices[i],1);
-		printf("0x%u ",c);
-	}
-	printf("\n");
-
 	//exportFLVER2(*flver,"flver.txt");
 	//raise(SIGINT);
+
+	printFLVER2(flver);
 };
