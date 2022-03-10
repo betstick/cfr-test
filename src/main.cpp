@@ -54,22 +54,28 @@ int main()
 	MEM* bndMem = mopen(bndRaw,arraySize);
 
 	//int* fileCount;
-	BND3* bnd = openBnd3(bndMem);
+	BND3* bnd = openBND3(bndMem);
 
 	//printf("files: %i\n",bnd->header->fileCount);
 	//printf("file[0].rawFlags:%x\n",bnd->files[0].header->rawFlags);
 	//printf("file[0].compressedSize:%x\n",bnd->files[0].header->compressedSize);
 	//printf("file[0].dataStart:%x\n",bnd->files[0].data);
 
-	char magic[5];
-	memcpy(magic,bnd->files[0].data,5);
+	//char magic[5];
+	//memcpy(magic,bnd->files[0].data,5);
 	//printf("file[0] magic: %s\n",magic);
 
-	memcpy(magic,&bndMem->src[bnd->files[0].header->dataOffset],5);
+	//memcpy(magic,&bndMem->src[bnd->files[0].header->dataOffset],5);
 	//printf("file[0] magic: %s\n",magic);
 
-	mseek(bndMem,bnd->files[0].header->dataOffset,SEEK_SET);
-	FLVER2* flver = openFLVER2(bndMem);
+	//mseek(bndMem,bnd->files[0].header->dataOffset,SEEK_SET);
+	//FLVER2* flver = openFLVER2(bndMem);
+
+	//this method seems to make sense, no messing with memory
+	FLVER2* flver = openFLVER2(
+		(void*)bnd->files[0].data,
+		(size_t)bnd->files[0].uncompressedSize
+	);
 
 	printf("flver.header.meshcount:%i\n",flver->header->meshCount);
 	//printf("flver.dummy[8].color[0]:%i\n",flver->dummies[8].color[0]);
