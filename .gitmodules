@@ -4,3 +4,6 @@
 [submodule "lib/cmem"]
 	path = lib/cmem
 	url = https://github.com/betstick/cmem
+[submodule "lib/havokloader"]
+	path = lib/havokloader
+	url = https://github.com/betstick/havokloader
