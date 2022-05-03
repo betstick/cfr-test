@@ -37,8 +37,6 @@ else()
 	message(STATUS "Using release mode...")
 endif()
 
-add_subdirectory(lib/cmem) #needed for running the CMakeLists to set vars
-message(STATUS "Found CMEM_LOCATION:" ${CMEM_DIR})
-
+add_subdirectory(lib/cmem)
 add_subdirectory(lib/cfromreader)
 add_subdirectory(src)
