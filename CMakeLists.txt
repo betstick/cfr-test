@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.10)
 
 project(cfr-test-proj)
 
-set(BIN_DIR "${CMAKE_SOURCE_DIR}/bin")
-
 include(GNUInstallDirs)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
@@ -31,6 +29,9 @@ else()
 	message(STATUS "Using release mode...")
 endif()
 
-add_subdirectory(lib/cmem)
-add_subdirectory(lib/cfromreader)
-add_subdirectory(src)
+set(CMAKE_BINARY_DIR bin/)
+
+add_subdirectory(lib/cmem/)
+add_subdirectory(lib/cfromreader/)
+
+add_subdirectory(src/)
