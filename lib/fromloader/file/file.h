@@ -1,43 +1,41 @@
 #pragma once
-#include "../common.h"
+#include "cmem.h"
+#include <stdio.h>
+#include <string>
+#include <vector>
+
+#include "../util/util.h"
 
 namespace cfr
 {
-	class Handle
-	{
-
-	};
-	class File
+	//an on disk, or in binder, listing for a file
+	class Entry
 	{
 		public:
-		std::string name;
-		long size;
-		void* data;
-		std::vector<File*> parents; //null means no parent
-		int references;
-		bool isCompressed; //virtual are in memory only
-		bool compressor; //if children are compressed
+		std::string name; //e.g. 'c5370.flver'
+		std::string path; //eg 'FRPG:/DATA/CHR/C5370/'
+		long offset; //null if in memory
+		long uncompressedSize; //in bytes
+		long compressedSize; //in bytes
+		int id = 0;
 
-		File();
-		File(MEM* src);
-		File(const char* path);
-
-
-		~File();
-
-		int open(); //0 on success, 1 on error
-		int close(); //0 on success, otherwise number of files open
-		std::string getType();
+		Entry(
+			std::string name, std::string path, long offset, 
+			long compressedSize, long uncompressedSize, int id
+		);
 	};
 
-	class Binder
+	//an in memory blob of bytes
+	class File : public Entry
 	{
+		public:
+		File* parent; //null for no parent
 		std::vector<File*> children;
+		bool bigEndian = false; //figure out later
+		char** data;
+
+		File(MEM* file);
+		File(FILE* file);
+		File(const char* path);
 	};
 };
-
-
-//only dealloc decompressed files when they are all closed and the
-//parent is also closed
-
-//basically, don't dealloc 

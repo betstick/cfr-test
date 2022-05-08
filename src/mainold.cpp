@@ -41,8 +41,10 @@ int main()
 	BHD5_1::FileHeader pbndHeader = hashMap.at(pathMap.at("/paramdef/paramdef.paramdefbnd.dcx"));
 	printf("size of paramdefbnd: %i\n",pbndHeader.fileSize);
 	
-	
+	//BND3* bnd = openBND3("data/c5370.chrbnd.dcx");
 
+	
+	
 	//BND3* paramdbnd = openBND3(parambnd.offset)
 
 	//printf("offset of /chr/c5370.chrbnd.dcx: %lx\n",gywnHeader.offset);

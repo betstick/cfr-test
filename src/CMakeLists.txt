@@ -8,7 +8,7 @@ set(SOURCES
 	"main.cpp"
 )
 
-add_executable(cfr-test main.h main.cpp)
+add_executable(cfr-test main.cpp)
 
 set_target_properties ( cfr-test PROPERTIES
 	OUTPUT_NAME "cfr-test"
@@ -17,4 +17,4 @@ set_target_properties ( cfr-test PROPERTIES
 
 include_directories( "../lib/cfromreader" )
 
-target_link_libraries(cfr-test cfr ${CMEM_LIB})
+target_link_libraries(cfr-test cfr ${CMEM_DIR}/cmem.c)
