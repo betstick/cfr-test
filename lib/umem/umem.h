@@ -34,9 +34,6 @@ UMEM* uopenFile(const char* path, const char* mode);
 //Load the current file into memory and closes the handle.
 size_t ufileToMem(UMEM*);
 
-//Write
-
-
 //Read data like with fread()
 size_t uread(void* dest, size_t size, size_t n, UMEM* source);
 
@@ -60,6 +57,9 @@ int uerror(UMEM* umem);
 
 //Return pointer to position in data
 char* utellptr(UMEM* umem);
+
+//Returns the next character
+char ugetc(UMEM* umem);
 
 #ifdef _cplusplus
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "cmem.h"
+#include "umem.h"
 #include <stdio.h>
 #include <string>
 #include <vector>
@@ -8,34 +9,39 @@
 
 namespace cfr
 {
-	//an on disk, or in binder, listing for a file
-	class Entry
+	enum FILE_TYPE
 	{
-		public:
-		std::string name; //e.g. 'c5370.flver'
-		std::string path; //eg 'FRPG:/DATA/CHR/C5370/'
-		long offset; //null if in memory
-		long uncompressedSize; //in bytes
-		long compressedSize; //in bytes
-		int id = 0;
-
-		Entry(
-			std::string name, std::string path, long offset, 
-			long compressedSize, long uncompressedSize, int id
-		);
+		FT_UNK,
+		FT_BND3,
+		FT_BND4,
+		FT_FLVER0,
+		FT_FLVER2
 	};
 
 	//an in memory blob of bytes
-	class File : public Entry
+	class File
 	{
 		public:
-		File* parent; //null for no parent
-		std::vector<File*> children;
-		bool bigEndian = false; //figure out later
-		char** data;
+		File* parent = nullptr;
+		std::vector<File*> children = {};
 
-		File(MEM* file);
-		File(FILE* file);
+		//bool bigEndian = false; //figure out later
+		UMEM* data = nullptr;
+
+		public:
 		File(const char* path);
+		File(UMEM* src);
+
+		//returns type of file if possible
+		FILE_TYPE getFileType();
+
+		//closes file unless there's children, returns how many
+		int close();
+
+		//force closes file and all of its children, returns dead child count
+		int forceClose();
+
+		private:
+		~File();
 	};
 };

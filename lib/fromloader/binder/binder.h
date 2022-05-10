@@ -14,26 +14,48 @@ namespace cfr
 		F_BHDP4, // ^^^^^^ version 4
 	};
 
+	//listing for a file in a bnd, not all members exist in each binder
+	class Entry
+	{
+		public:
+		std::string name = ""; //e.g. 'c5370.flver'
+		std::string path = ""; //eg 'FRPG:/DATA/CHR/C5370/'
+		long hash = 0;
+		long offset = 0; //relative to start of binder data
+		long uncompressedSize = 0; //in bytes
+		long compressedSize   = 0; //in bytes
+		long id = 0;
+
+		Entry();
+
+		Entry(
+			std::string name, std::string path, long offset, 
+			long compressedSize, long uncompressedSize, long id
+		);
+	};
+
 	class Binder : public File
 	{
 		public:
-		std::vector<Entry> files = {};
 		BinderFormat format = UNK;
-		bool isFile = false;
+		std::vector<Entry> entries = {};
 
-		virtual File loadFileName(std::string name);
+		File* loadFile(int index);
 
-		virtual File loadFileHash(int hash);
+		File* loadFileId(int entryID);
 
-		virtual File loadFileIndex(int entryIndex);
+		File* loadFileHash(int hash);
 
-		virtual int write(const char* path);
+		File* loadFileName(std::string name);
 
-		virtual int write(FILE* file);
+		//virtual int write(const char* path);
+
+		//virtual int write(FILE* file);
 
 		protected:
-		FILE* file = nullptr;
+		Binder();
+		~Binder();
 
-		Binder(); //not to be used
+		//Binder(File file);
 	};
 };

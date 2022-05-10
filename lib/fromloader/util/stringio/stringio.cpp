@@ -2,7 +2,7 @@
 
 namespace cfr
 {
-	std::string freadString(FILE* src, bool nullTerm = true, int length = 0)
+	std::string freadString(UMEM* src, bool nullTerm = true, int length = 0)
 	{
 		std::string ret = "";
 
@@ -12,9 +12,9 @@ namespace cfr
 
 			while(!found)
 			{
-				char c = fgetc(src);
+				char c = ugetc(src);
 
-				if(feof(src) != 0)
+				if(ueod(src) != 0)
 					throw std::runtime_error("Reached end of file while reading string...\n");
 				if(c == 0)
 					found = true;
@@ -29,9 +29,9 @@ namespace cfr
 			//this could be better optimized
 			for(int i = 0; i < length; i++)
 			{
-				if(feof(src) != 0)
+				if(ueod(src) != 0)
 					throw std::runtime_error("Reached end of file while reading string...\n");
-				ret.push_back(fgetc(src));
+				ret.push_back(ugetc(src));
 			}
 
 			return ret;

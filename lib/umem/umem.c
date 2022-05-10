@@ -57,7 +57,7 @@ long utell(UMEM* umem)
 
 void uclose(UMEM* umem)
 {
-	umem->isFile ? fclose(umem->file) : free(umem->mem);
+	umem->isFile ? fclose(umem->file) : mclose(umem->mem);
 };
 
 char* utellptr(UMEM* umem)
@@ -76,4 +76,11 @@ int ueod(UMEM* umem)
 int uerror(UMEM* umem)
 {
 	return (ferror(umem->file) || merror(umem->mem));
+};
+
+char ugetc(UMEM* umem)
+{
+	char c;
+	uread(&c,sizeof(char),1,umem);
+	return c;
 };
