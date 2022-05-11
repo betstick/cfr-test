@@ -264,26 +264,30 @@ namespace cfr {
 			Header header;
 			UMEM* data; //size of dataLength
 
-			Member(UMEM* src, int startOffset);
+			Member(UMEM* src, long startOffset);
 		};
 
-		struct EdgeIndices
+		class EdgeIndices
 		{
+			public:
 			struct Header
 			{
-				int16_t memberCount;
-				int16_t unk02;
-				int32_t unk04;
-				int32_t unk08; //assert(0)
-				int32_t unk0C;
+				int16_t memberCount = 0;
+				int16_t unk02 = 0;
+				int32_t unk04 = 0;
+				int32_t unk08 = 0; //assert(0)
+				int32_t unk0C = 0;
 			};
 
-			Header* header;
-			Member* members; //size of memberCount
+			Header header;
+			std::vector<Member*> members; //size of memberCount
+
+			EdgeIndices(UMEM* src);
 		};
 
-		struct FaceSet
+		class FaceSet
 		{
+			public:
 			struct Header
 			{
 				uint32_t flags;
@@ -304,46 +308,49 @@ namespace cfr {
 				int32_t unk1C; //assert(0)
 			};
 			
-			Header* header;
-			VertInfo* vertInfo;
-			EdgeIndices* vertexIndicesEdge = NULL;
-			uint16_t* vertexIndicesShort = NULL; //vertexindexcount
-			uint32_t* vertexIndicesInt = NULL; //vertexindexcount
+			Header header;
+			VertInfo vertInfo;
+			EdgeIndices vertexIndicesEdge = nullptr;
+			std::vector<uint16_t> vertexIndicesShort = {}; //vertexindexcount
+			std::vector<uint32_t> vertexIndicesInt = {}; //vertexindexcount
 			int vertexSize = 0; //more accurate
+
+			FaceSet(UMEM* src, FLVER2* parent);
 		};
 
-		struct VertexBuffer
+		class VertexBuffer
 		{
+			public:
 			struct Header
 			{
-				int32_t bufferIndex;
-				int32_t layoutIndex;
-				int32_t vertexSize;
-				int32_t vertexCount;
+				int32_t bufferIndex = 0;
+				int32_t layoutIndex = 0;
+				int32_t vertexSize  = 0;
+				int32_t vertexCount = 0;
 
-				int32_t unk10; //assert(0)
-				int32_t unk14; //assert(0)
+				int32_t unk10 = 0; //assert(0)
+				int32_t unk14 = 0; //assert(0)
 
-				uint32_t verticesLength; //0 in version 20005, non 0 in 20008
-				uint32_t bufferOffset;
-			};
-
-			struct Vertex
-			{
-				char* data; //vertexSize blocks
+				uint32_t verticesLength = 0; //0 in version 20005, non 0 in 20008
+				uint32_t bufferOffset   = 0;
 			};
 			
-			Header* header;
-			Vertex* vertices; //vertexCount * vertexSize
+			Header header;
+			UMEM* data = nullptr; //vertexCount * vertexSize
+
+			VertexBuffer(UMEM* src, FLVER2* parent);
 		};
 
-		struct LayoutMember
+		class LayoutMember
 		{
+			public:
 			int32_t unk00; //0, 1, or 2
 			int32_t structOffset; //unused?
 			uint32_t type;
 			uint32_t semantic;
 			int32_t index;
+
+			LayoutMember(UMEM* src);
 		};
 
 		struct BufferLayout

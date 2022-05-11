@@ -37,8 +37,8 @@ namespace cfr
 				GxItem* gxItem = new GxItem(src);
 
 				if(parent->header.version >= 0x20010 && 
-				gxItem->id != 0x7FFFFFFF && 
-				gxItem->id != 0xFFFFFFFF)
+					gxItem->id != 0x7FFFFFFF && 
+					gxItem->id != 0xFFFFFFFF)
 				{
 					this->gxItems.insert(this->gxItems.end(),gxItem);
 				}
@@ -67,7 +67,7 @@ namespace cfr
 
 	FLVER2::Mesh::Mesh(UMEM* src, FLVER2* parent)
 	{
-		uread(this,sizeof(Header),1,src);
+		uread(&this->header,sizeof(Header),1,src);
 
 		long pos = utell(src);
 
@@ -88,28 +88,28 @@ namespace cfr
 			//uread(&boneIndices,sizeof(int32_t),this->header.boneCount,src);
 			//this->boneIndices.insert(this->boneIndices.end(),&boneIndices[0],&boneIndices[this->header.boneCount]);
 
+			int32_t boneIndex = 0;
 			for(int i = this->header.boneCount; i > 0; i--)
 			{
-				int32_t boneIndex = 0;
 				uread(&boneIndex,sizeof(int32_t),1,src);
 				this->boneIndices.insert(this->boneIndices.end(),boneIndex);
 			}
 		}
 
 		useek(src,this->header.faceSetIndicesOffset,SEEK_SET);
-
+		
+		int32_t faceSetIndex = 0;
 		for(int i = this->header.faceSetCount; i > 0; i--)
 		{
-			int32_t faceSetIndex = 0;
 			uread(&faceSetIndex,sizeof(int32_t),1,src);
 			this->faceSetIndices.insert(this->faceSetIndices.end(),faceSetIndex);
 		}
 
 		useek(src,this->header.vertexBufferIndicesOffset,SEEK_SET);
 
+		int32_t vertBuffIndex = 0;
 		for(int i = this->header.vertexBufferCount; i > 0; i--)
 		{
-			int32_t vertBuffIndex = 0;
 			uread(&vertBuffIndex,sizeof(int32_t),1,src);
 			this->vertexBufferIndices.insert(this->vertexBufferIndices.end(),vertBuffIndex);
 		}
@@ -117,9 +117,9 @@ namespace cfr
 		useek(src,0,pos);
 	};
 
-	FLVER2::Member::Member(UMEM* src, int startOffset)
+	FLVER2::Member::Member(UMEM* src, long startOffset)
 	{
-		uread(this,sizeof(Header),1,src);
+		uread(&this->header,sizeof(Header),1,src);
 
 		long pos = utell(src);
 
@@ -132,87 +132,83 @@ namespace cfr
 		useek(src,pos,SEEK_SET);
 	};
 
-	FLVER2::EdgeIndices* edgeIndicesInit(MEM* src, int startOffset)
+	FLVER2::EdgeIndices::EdgeIndices(UMEM* src)
 	{
-		FLVER2::EdgeIndices* indices = (FLVER2::EdgeIndices*)malloc(sizeof(FLVER2::EdgeIndices));
-		indices->header = (FLVER2::EdgeIndices::Header*)mtellptr(src);
+		long pos = utell(src);
 
-		indices->members = (FLVER2::Member*)malloc(sizeof(FLVER2::Member*)*indices->header->memberCount);
+		uread(&this->header,sizeof(Header),1,src);
 
-		return indices;
+		for(int i = this->header.memberCount; i > 0; i--)
+		{
+			this->members.insert(this->members.end(),new Member(src,pos));
+		}
 	};
 
-	/*FLVER2::FaceSet* faceSetInit(MEM* src, int startOffset, FLVER2::Header* hdr)
+	FLVER2::FaceSet::FaceSet(UMEM* src, FLVER2* parent)
 	{
-		FLVER2::FaceSet* set = (FLVER2::FaceSet*)malloc(sizeof(FLVER2::FaceSet));
-		set->header = (FLVER2::FaceSet::Header*)mtellptr(src);
-		mseek(src,sizeof(FLVER2::FaceSet::Header),SEEK_CUR);
+		uread(&this->header,sizeof(Header),1,src);
 
-		//printf("faceset: count: %i\n",set->header->vertexIndexCount);
-		//printf("faceset: offset: 0x%x\n",set->header->vertexIndicesOffset);
+		if(parent->header.version >= 0x20009)
+			uread(&this->vertInfo,sizeof(vertInfo),1,src);
 
-		if(hdr->version >= 0x20009)
+		if(parent->header.vertexIndexSize == 0)
+			this->vertexSize = this->vertInfo.vertexIndexSize;
+		else
+			this->vertexSize = parent->header.vertexIndexSize;
+		
+		long pos = utell(src);
+		useek(src,parent->header.dataOffset + this->header.vertexIndicesOffset,SEEK_SET);
+
+		switch(this->vertexSize)
 		{
-			set->vertInfo = (FLVER2::FaceSet::VertInfo*)mtellptr(src);
-			mseek(src,sizeof(FLVER2::FaceSet::VertInfo),SEEK_CUR);
-		}
-
-		set->vertexSize = hdr->vertexIndexSize == 0 ? set->vertexSize : hdr->vertexIndexSize;
-
-		long pos = mtell(src);
-		mseek(src,set->header->vertexIndicesOffset+hdr->dataOffset+startOffset,SEEK_SET);
-
-		if(set->vertexSize == 8)
-		{
-			//TODO: fix this mess later :/
-			/*set->vertexIndicesEdge = (FLVER2::EdgeIndices**)malloc(sizeof(FLVER2::EdgeIndices)*set->header->vertexIndexCount);
-
-			for(int i = 0; i < set->header->vertexIndexCount; i++)
+			case(8):
+				this->vertexIndicesEdge = EdgeIndices(src);
+			case(16):
 			{
-				set->vertexIndicesEdge[i] = edgeIndicesInit(src, startOffset);
-			}*/
-		/*}
-		else if(set->vertexSize == 16)
-		{
-			set->vertexIndicesShort = (uint16_t*)mtellptr(src);
-		}
-		else if(set->vertexSize == 32)
-		{
-			set->vertexIndicesInt = (uint32_t*)mtellptr(src);
-		}
-
-		mseek(src,pos,SEEK_SET);
-
-		return set;
-	};*/
-
-	/*FLVER2::VertexBuffer* vertexBufferInit(MEM* src, int startOffset, FLVER2::Header* hdr)
-	{
-		FLVER2::VertexBuffer* buff = (FLVER2::VertexBuffer*)malloc(sizeof(FLVER2::VertexBuffer));
-		buff->header = (FLVER2::VertexBuffer::Header*)mtellptr(src);
-		mseek(src,sizeof(FLVER2::VertexBuffer::Header),SEEK_CUR);
-
-		buff->vertices = (FLVER2::VertexBuffer::Vertex*)malloc(
-				sizeof(FLVER2::VertexBuffer::Vertex)*buff->header->vertexCount
-		);
-
-		if(buff->header->unk10 == 0 && buff->header->unk14 == 0)
-		{
-			long pos = mtell(src);
-			mseek(src,hdr->dataOffset+buff->header->bufferOffset+startOffset,SEEK_SET);
-
-			for(int i = 0; i < buff->header->vertexCount; i++)
-			{
-				//printf("vertex[%i] loc: 0x%x\n",i,(mtell(src)-startOffset));
-				buff->vertices[i].data = (char*)mtellptr(src);
-				mseek(src,buff->header->vertexSize,SEEK_CUR);
+				uint16_t tmp = 0;
+				for(int i = this->header.vertexIndexCount; i > 0; i--)
+				{
+					uread(&tmp,sizeof(uint16_t),1,src);
+					this->vertexIndicesShort.insert(this->vertexIndicesShort.end(),tmp);
+				}
 			}
-
-			mseek(src,pos,SEEK_SET);
+			case(32):
+			{
+				uint32_t tmp = 0;
+				for(int i = this->header.vertexIndexCount; i > 0; i--)
+				{
+					uread(&tmp,sizeof(uint16_t),1,src);
+					this->vertexIndicesInt.insert(this->vertexIndicesInt.end(),tmp);
+				}
+			}
+			default:
+				throw std::runtime_error("Uknown Vertex Size in FLVER2::FaceSet!\n");
 		}
 
-		return buff;
-	};*/
+		useek(src,pos,SEEK_SET);
+	};
+
+	FLVER2::VertexBuffer::VertexBuffer(UMEM* src, FLVER2* parent)
+	{
+		uread(&this->header,sizeof(Header),1,src);
+		long dataSize = this->header.vertexCount*this->header.vertexSize;
+
+		if(this->header.unk10 == 0 && this->header.unk14 == 0)
+		{
+			long pos = utell(src);
+
+			char* tmp = (char*)malloc(dataSize);
+			uread(tmp,this->header.vertexCount*this->header.vertexSize,1,src);
+			this->data = uopenMem(tmp,this->header.vertexCount*this->header.vertexSize);
+
+			useek(src,pos,SEEK_SET);
+		}
+	};
+
+	FLVER2::LayoutMember::LayoutMember(UMEM* src)
+	{
+		uread(this,sizeof(LayoutMember),1,src);
+	};
 
 	/*FLVER2::BufferLayout* bufferLayoutInit(MEM* src, int startOffset)
 	{
