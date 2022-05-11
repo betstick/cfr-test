@@ -49,47 +49,47 @@ namespace cfr {
 			public:
 			char magic[6]; //this was working with size 4 somehow. it shouldn't
 			char endian[2];
-			uint32_t version;
+			uint32_t version = 0;
 
 			uint32_t dataOffset = 0;
-			uint32_t dataLength;
+			uint32_t dataLength = 0;
 
-			int32_t dummyCount;
-			int32_t materialCount;
-			int32_t boneCount;
-			int32_t meshCount;
-			int32_t vertexBufferCount;
+			int32_t dummyCount = 0;
+			int32_t materialCount = 0;
+			int32_t boneCount = 0;
+			int32_t meshCount = 0;
+			int32_t vertexBufferCount = 0;
 
 			cfr_vec3 boundingBoxMin = {0.0f,0.0f,0.0f};
 			cfr_vec3 boundingBoxMax = {0.0f,0.0f,0.0f};
 
-			int32_t trueFaceCount; // Does not include shadow meshes or degenerate faces
-			int32_t totalFaceCount;
+			int32_t trueFaceCount  = 0; // Does not include shadow meshes or degenerate faces
+			int32_t totalFaceCount = 0;
 
-			char vertexIndexSize;
-			char unicode;
+			char vertexIndexSize = '\0';
+			char unicode = '\0';
 
-			char unk4A;
-			char unk4B;
+			char unk4A = '\0';
+			char unk4B = '\0';
 
-			int32_t primitiveRestartConstant; //guess, needs confirmation
-			int32_t faceSetCount;
-			int32_t bufferLayoutCount;
-			int32_t textureCount;
+			int32_t primitiveRestartConstant = 0; //guess, needs confirmation
+			int32_t faceSetCount = 0;
+			int32_t bufferLayoutCount = 0;
+			int32_t textureCount = 0;
 
-			char unk5C;
-			char unk5D;
-			char unk5E; //assert(0)
-			char unk5F; //assert(0)
+			char unk5C = '\0';
+			char unk5D = '\0';
+			char unk5E = '\0'; //assert(0)
+			char unk5F = '\0'; //assert(0)
 
-			int32_t unk60; //assert(0)
-			int32_t unk64; //assert(0)
-			int32_t unk68;
-			int32_t unk6C; //assert(0)
-			int32_t unk70; //assert(0)
-			int32_t unk74; //assert(0)
-			int32_t unk78; //assert(0)
-			int32_t unk7C; //assert(0)
+			int32_t unk60 = 0; //assert(0)
+			int32_t unk64 = 0; //assert(0)
+			int32_t unk68 = 0;
+			int32_t unk6C = 0; //assert(0)
+			int32_t unk70 = 0; //assert(0)
+			int32_t unk74 = 0; //assert(0)
+			int32_t unk78 = 0; //assert(0)
+			int32_t unk7C = 0; //assert(0)
 
 			Header(UMEM* src);
 		};
@@ -353,8 +353,9 @@ namespace cfr {
 			LayoutMember(UMEM* src);
 		};
 
-		struct BufferLayout
+		class BufferLayout
 		{
+			public:
 			struct Header
 			{
 				int32_t memberCount;
@@ -365,12 +366,15 @@ namespace cfr {
 				uint32_t membersOffset;
 			};
 
-			Header* header;
-			LayoutMember** members; //size of memberCount
+			Header header;
+			std::vector<LayoutMember*> members; //size of memberCount
+
+			BufferLayout(UMEM* src);
 		};
 
-		struct Texture
+		class Texture
 		{
+			public:
 			uint32_t pathOffset;
 			uint32_t typeOffset;
 
@@ -383,18 +387,26 @@ namespace cfr {
 			float unk14;
 			float unk18;
 			float unk1C;
+
+			Texture(UMEM* src);
 		};
 
-		struct VertexBoneWeights
+		class VertexBoneWeights
 		{
+			public:
 			float a,b,c,d;
 			int32_t length; //always 4
+
+			VertexBoneWeights(UMEM* src);
 		};
 
-		struct VertexBoneIndices
+		class VertexBoneIndices
 		{
+			public:
 			int32_t a,b,c,d;
 			int32_t length; //always 4
+
+			VertexBoneIndices(UMEM* src);
 		};
 
 		struct VertexColor
@@ -403,19 +415,16 @@ namespace cfr {
 		};
 
 		Header header;
-		Dummy* dummies;
-		Material* materials;
-		Bone* bones;
-		Mesh* meshes;
-		FaceSet* faceSets;
-		VertexBuffer* vertexBuffers;
-		BufferLayout* bufferLayouts;
-		Texture* textures;
+		std::vector<Dummy> dummies;
+		std::vector<Material> materials;
+		std::vector<Bone> bones;
+		std::vector<Mesh> meshes;
+		std::vector<FaceSet> faceSets;
+		std::vector<VertexBuffer> vertexBuffers;
+		std::vector<BufferLayout> bufferLayouts;
+		std::vector<Texture> textures;
 
 		FLVER2(const char* path);
 		FLVER2(UMEM* src);
-
-
-		//FLVER2::
 	};
 };
