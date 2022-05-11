@@ -1,31 +1,31 @@
-aaaaaaaaaaaaaaaaaaa
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+#include "fileio.h"
+#define _CRT_SECURE_NO_DEPRECATE //shuts up microsoft's prattle
 
-aaaaaaaaaaaaa
-a
-aaaaaaaaaaaaa
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-aaaaa
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-aaaaaa
-aa
-aaaaaaaaaaaa
+namespace cfr
+{
+#ifdef _WIN32
+	FILE* v_fopen(const char* filename, const char* modes)
+#else
+	FILE* v_fopen(const char* __restrict__ __filename, const char* __restrict__ __modes)
+#endif
+	{
+		errno = 0;
 
-aaaaaaaaaaaaaaaaaaaa
-aaaaaaaaaaaaa
-aaaaaaaaaaaaaaaaa
-aaaaa
-aaaaaaaaaaaaaaaaaaaaa
-aaaaaa
-aaaa
+		FILE* ptr = fopen(
+#ifdef _WIN32
+			filename,modes
+#else
+			__filename,__modes
+#endif
+		);
 
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-aaa
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-aaaaaaaaaaa
-aaa
+		if(ptr == NULL || errno != 0)
+		{
+			perror("v_fopen() error: ");
+			exit(1);
+		}
 
-aaaaaaaaaaaaa
-aaa
+		return ptr;
+	};
 
-aa
+};

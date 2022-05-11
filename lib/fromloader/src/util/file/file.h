@@ -1,6 +1,4 @@
 #pragma once
-#include "cmem.h"
-#include "umem.h"
 #include <stdio.h>
 #include <string>
 #include <vector>
@@ -9,6 +7,7 @@
 #include <stdexcept>
 
 #include "../types/types.h"
+#include "umem.h"
 
 #ifndef __CFR_FILE
 #define __CFR_FILE

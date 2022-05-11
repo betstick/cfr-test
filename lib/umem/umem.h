@@ -9,17 +9,12 @@
 #ifndef UMEM__
 #define UMEM__
 
-#ifdef _cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct UMEM
 {
-	//char* src;
-	//size_t size;
-	//long position;
-	//bool err;
-	//bool eod; //end of data
 	bool isFile;
 	FILE* file;
 	MEM* mem;
@@ -61,7 +56,7 @@ char* utellptr(UMEM* umem);
 //Returns the next character
 char ugetc(UMEM* umem);
 
-#ifdef _cplusplus
+#ifdef __cplusplus
 }
 #endif
 

@@ -1,5 +1,7 @@
 #pragma once
-#include "../../file/file.h"
+#include "../file/file.h"
+#include <zlib.h>
+#include <assert.h>
 
 #ifndef ZLIB_INF__
 #define ZLIB_INF__

@@ -1,4 +1,7 @@
 #pragma once
+
+#include <stdexcept>
+
 #include "../../stdafx.h"
 //welcome to FLVER-town
 
@@ -37,11 +40,13 @@ namespace cfr {
 		FVT_UNK2               = 0x2F, //unknown
 		FVT_UNK3               = 0xF0, //unknown
 	};
-
-	struct FLVER2
+		
+	class FLVER2 : public File
 	{
-		struct Header
+		public:
+		class Header
 		{
+			public:
 			char magic[6]; //this was working with size 4 somehow. it shouldn't
 			char endian[2];
 			uint32_t version;
@@ -55,8 +60,8 @@ namespace cfr {
 			int32_t meshCount;
 			int32_t vertexBufferCount;
 
-			cfr_vec3 boundingBoxMin;
-			cfr_vec3 boundingBoxMax;
+			cfr_vec3 boundingBoxMin = {0.0f,0.0f,0.0f};
+			cfr_vec3 boundingBoxMax = {0.0f,0.0f,0.0f};
 
 			int32_t trueFaceCount; // Does not include shadow meshes or degenerate faces
 			int32_t totalFaceCount;
@@ -85,20 +90,23 @@ namespace cfr {
 			int32_t unk74; //assert(0)
 			int32_t unk78; //assert(0)
 			int32_t unk7C; //assert(0)
+
+			Header(UMEM* src);
 		};
 
-		struct Dummy
+		class Dummy
 		{
+			public:
 			cfr_vec3 position;
 
 			uint8_t color[4];
 
-			cfr_vec3 forward;
+			cfr_vec3 forward = {0.0f,0.0f,0.0f};
 
 			int16_t referenceID;
 			int16_t dummyBoneIndex;
 
-			cfr_vec3 upward;
+			cfr_vec3 upward = {0.0f,0.0f,0.0f};
 
 			int16_t attachBoneIndex;
 			char unk2E;
@@ -108,65 +116,76 @@ namespace cfr {
 			int32_t unk34;
 			int32_t unk38; //assert(0)
 			int32_t unk3C; //assert(0)
+
+			Dummy(UMEM* src);
 		};
 
-		struct Material //unclear on how safe this is '_>', specifically gxOffset
+		class Material //unclear on how safe this is '_>', specifically gxOffset
 		{
+			public:
 			struct Header
 			{
 				uint32_t nameOffset = 0;
 				uint32_t mtdOffset = 0;
 
-				int32_t textureCount;
-				int32_t textureIndex;
+				int32_t textureCount = 0;
+				int32_t textureIndex = 0;
 
-				uint32_t flags;
+				uint32_t flags = 0;
 				uint32_t gxOffset = 0;
 
-				int32_t unk18;
-				int32_t unk1C; //assert(0)
+				int32_t unk18 = 0;
+				int32_t unk1C = 0; //assert(0)
 			};
 			
-			struct GxItem //length INCLUDES this struct!
+			class GxItem //length INCLUDES this struct!
 			{
+				public:
 				uint32_t id;
 				int32_t unk04; //maybe assert(100)? if header.version < 0x20010
 				int32_t length;
 
-				char data[];
+				char* data;
+
+				GxItem(UMEM* src);
 			};
 
-			Header* header;
-			GxItem** gxItems;
+			Header header;
+			std::vector<GxItem*> gxItems;
+			Material(UMEM* src, FLVER2* parent);
 		};
 
-		struct Bone
+		class Bone
 		{
-			cfr_vec3 translation;
+			public:
+			cfr_vec3 translation = {0.0f,0.0f,0.0f};
 
 			uint32_t nameOffset;
 
-			cfr_vec3 rot;
+			cfr_vec3 rot = {0.0f,0.0f,0.0f};
 
 			int16_t parentIndex;
 			int16_t childIndex;
 
-			cfr_vec3 scale;
+			cfr_vec3 scale = {0.0f,0.0f,0.0f};
 
 			int16_t nextSiblingIndex;
 			int16_t previousSiblingIndex;
 
-			cfr_vec3 boundingBoxMin;
+			cfr_vec3 boundingBoxMin = {0.0f,0.0f,0.0f};
 			
 			int32_t unk3C;
 
-			cfr_vec3 boundingBoxMax;
+			cfr_vec3 boundingBoxMax = {0.0f,0.0f,0.0f};
 			
 			char emptyJunk[52]; //potentially needed for spacing :/
+
+			Bone(UMEM* src);
 		};
 
-		struct Mesh
+		class Mesh
 		{
+			public:
 			struct Header
 			{
 				bool dynamic; 
@@ -191,26 +210,21 @@ namespace cfr {
 				int32_t vertexBufferCount;
 				uint32_t vertexBufferIndicesOffset;
 			};
+			
+			Header header;
 
 			//only if boundingBoxOffset != 0
-			struct BoundingBoxData
-			{
-				cfr_vec3 boundingBoxMin;
-				cfr_vec3 boundingBoxMax;
-			};
+			cfr_vec3 boundingBoxMin = {0.0f,0.0f,0.0f};
+			cfr_vec3 boundingBoxMax = {0.0f,0.0f,0.0f};
 
 			//only if header.version >= 0x2001A
-			struct BoundingBoxDataUnk
-			{
-				cfr_vec3 boundingBoxUnk;
-			};
-			
-			Header* header = NULL;
-			BoundingBoxData* boundingBoxData = NULL;
-			BoundingBoxDataUnk* boundingBoxDataUnk = NULL;
-			int32_t** boneIndices; //size of boneCount
-			int32_t** faceSetIndices; //size of faceSetCount
-			int32_t** vertexBufferIndices; //size of vertexBufferCount
+			cfr_vec3 boundingBoxUnk = {0.0f,0.0f,0.0f};
+
+			std::vector<int32_t> boneIndices; //size of boneCount
+			std::vector<int32_t> faceSetIndices; //size of faceSetCount
+			std::vector<int32_t> vertexBufferIndices; //size of vertexBufferCount
+
+			Mesh(UMEM* src, FLVER2* parent);
 		};
 
 		struct Member
@@ -247,8 +261,10 @@ namespace cfr {
 				int32_t unk3C; //assert(-1)
 			};
 
-			Header* header;
-			uint8_t* data; //size of dataLength
+			Header header;
+			UMEM* data; //size of dataLength
+
+			Member(UMEM* src, int startOffset);
 		};
 
 		struct EdgeIndices
@@ -379,7 +395,7 @@ namespace cfr {
 			float a,r,g,b;
 		};
 
-		Header* header;
+		Header header;
 		Dummy* dummies;
 		Material* materials;
 		Bone* bones;
@@ -388,20 +404,11 @@ namespace cfr {
 		VertexBuffer* vertexBuffers;
 		BufferLayout* bufferLayouts;
 		Texture* textures;
+
+		FLVER2(const char* path);
+		FLVER2(UMEM* src);
+
+
+		//FLVER2::
 	};
-
-	//Init FLVER2 from MEM, pos assumed to be at start of FLVER
-	FLVER2* openFLVER2(MEM* src);
-
-	//Init FLVER2 from a pointer
-	FLVER2* openFLVER2(void* src, size_t size);
-
-	//Init FLVER2 from a file
-	FLVER2* openFLVER2(const char* path);
-
-	//Export data from FLVER2 for validation.
-	void exportFLVER2(FLVER2 flver, const char* path);
-
-	//Print FLVER2 data to console.
-	void printFLVER2(FLVER2* flver);
 };

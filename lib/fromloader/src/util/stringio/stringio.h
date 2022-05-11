@@ -3,6 +3,7 @@
 #include <string>
 #include "umem.h"
 #include <stdexcept>
+#include <stdbool.h>
 
 namespace cfr
 {

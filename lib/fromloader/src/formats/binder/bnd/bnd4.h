@@ -10,7 +10,7 @@ namespace cfr
 		class Header
 		{
 			public:
-
+			int a;
 			Header(UMEM* src);
 		};
 
