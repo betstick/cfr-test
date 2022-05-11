@@ -4,36 +4,36 @@
 #include <stdio.h>
 #include <string>
 #include <vector>
+#include <unordered_map>
+#include <random>
+#include <stdexcept>
 
-#include "../util/util.h"
+#include "../types/types.h"
+
+#ifndef __CFR_FILE
+#define __CFR_FILE
 
 namespace cfr
 {
-	enum FILE_TYPE
-	{
-		FT_UNK,
-		FT_BND3,
-		FT_BND4,
-		FT_FLVER0,
-		FT_FLVER2
-	};
-
 	//an in memory blob of bytes
 	class File
 	{
 		public:
 		File* parent = nullptr;
-		std::vector<File*> children = {};
+		std::unordered_map<int,File*> children = {};
+		int uid; //unique id to aid in tracking
+		FILE_FORMAT format = UNKOWN_FORMAT;
 
 		//bool bigEndian = false; //figure out later
 		UMEM* data = nullptr;
 
 		public:
-		File(const char* path);
-		File(UMEM* src);
 
 		//returns type of file if possible
-		FILE_TYPE getFileType();
+		FILE_FORMAT getFormat();
+
+		//write to 
+		virtual UMEM* toBytes();
 
 		//closes file unless there's children, returns how many
 		int close();
@@ -41,7 +41,14 @@ namespace cfr
 		//force closes file and all of its children, returns dead child count
 		int forceClose();
 
-		private:
+		protected:
+
+		int newChild(File* file);
+
+		File(const char* path);
+		File(UMEM* src);
 		~File();
 	};
 };
+
+#endif

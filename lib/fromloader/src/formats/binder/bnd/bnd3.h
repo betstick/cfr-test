@@ -1,9 +1,9 @@
 #pragma once
+#include "../../../util/include.h"
 #include "../binder.h"
 
 namespace cfr
 {
-
 	class BND3 : public Binder
 	{
 		private:
@@ -23,7 +23,6 @@ namespace cfr
 			int32_t unk1C; //assert 0
 
 			Header();
-
 			Header(UMEM* src);
 		};
 
@@ -43,10 +42,9 @@ namespace cfr
 			int32_t nameOffset = 0;
 			int32_t uncompressedSize = 0;
 
-			BND3_Entry();
 			BND3_Entry(Header header, UMEM* src, long startPos);
 
-			Entry* newEntry();
+			//Entry* newEntry(UMEM* src, int startPos);
 		};
 
 		Header header;
@@ -56,12 +54,9 @@ namespace cfr
 		//init from path
 		BND3(const char* path);
 
-		//init from File
-		BND3(File file);
+		BND3(UMEM* src);
 
 		private:
-		BND3(UMEM* src);
 		~BND3();
 	};
-
 };

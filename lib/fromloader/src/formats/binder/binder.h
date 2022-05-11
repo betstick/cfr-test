@@ -1,19 +1,8 @@
 #pragma once
-#include "../file/file.h"
+#include "../../util/file/file.h"
 
 namespace cfr
 {
-	enum BinderFormat 
-	{
-		F_UNK = 0,
-		F_BND3,
-		F_BND4,
-		F_BHD5_0,
-		F_BHD5_1,
-		F_BHDP3, //binder header data pair (bhf3+bdf3)
-		F_BHDP4, // ^^^^^^ version 4
-	};
-
 	//listing for a file in a bnd, not all members exist in each binder
 	class Entry
 	{
@@ -37,10 +26,9 @@ namespace cfr
 	class Binder : public File
 	{
 		public:
-		BinderFormat format = UNK;
 		std::vector<Entry> entries = {};
 
-		File* loadFile(int index);
+		File* loadEntry(int index);
 
 		File* loadFileId(int entryID);
 
@@ -48,12 +36,16 @@ namespace cfr
 
 		File* loadFileName(std::string name);
 
+		//writing will require all open children to be written as well...
+
 		//virtual int write(const char* path);
 
 		//virtual int write(FILE* file);
 
 		protected:
-		Binder();
+		//will need mem to create the file i suppose? 
+		Binder(UMEM* src);
+		Binder(const char* path);
 		~Binder();
 
 		//Binder(File file);

@@ -2,24 +2,6 @@
 
 namespace cfr
 {
-	/*void BND3::operator=(File a)
-	{
-		BND3(a.data);
-	};*/
-
-	Entry::Entry(
-		std::string name, std::string path, long offset, 
-		long compressedSize, long uncompressedSize, long id
-	)
-	{
-		this->name = name;
-		this->path = path;
-		this->offset = offset;
-		this->compressedSize = compressedSize;
-		this->uncompressedSize = uncompressedSize;
-		this->id = id;
-	};
-
 	BND3::BND3_Entry::BND3_Entry(Header header, UMEM* src, long startPos)
 	{
 		uread(&this->rawFlags,sizeof(char),4,src);
@@ -41,21 +23,36 @@ namespace cfr
 			uread(&this->uncompressedSize,sizeof(int32_t),1,src);
 	};
 
-	BND3::BND3(const char* path)
+	/*Entry* BND3::BND3_Entry::newEntry(UMEM* src, int startPos)
+	{
+		long position = utell(src);
+			
+		useek(src,this->nameOffset+startPos,SEEK_CUR);
+
+		std::string fullpath = freadString(src);
+
+		std::pair<std::string, std::string> pathName = splitFullPath(fullpath);
+
+		useek(src,position,SEEK_SET);
+
+		return new Entry(
+			pathName.first, pathName.second,
+			this->dataOffset+startPos,
+			this->compressedSize,
+			this->uncompressedSize,
+			this->id				
+		);
+	};*/
+
+	BND3::BND3(const char* path) : Binder(path)
 	{
 		this->data = uopenFile(path,"rb");
 		BND3(this->data);
 	};
 
-	BND3::BND3(File file)
+	BND3::BND3(UMEM* src) : Binder(src)
 	{
-		this->data = file.data;
-		BND3(this->data);
-	};
-
-	BND3::BND3(UMEM* src)
-	{
-		this->format = F_BND3;
+		//this->format = FROM_BND3;
 		this->data = src;
 
 		long startPos = utell(src);
