@@ -60,6 +60,10 @@ namespace cfr
 	{
 		uread(this,sizeof(int32_t),3,src);
 
+#ifdef VALIDATE_ALL
+		assertMsg(this->Header.unk1C,"FLVER2::Material.Header.unk1C is not 0!\n");
+#endif
+
 		if(this->length > 12)
 			uread(this->data,this->length-(sizeof(int32_t)*3),1,src);
 	};
@@ -72,6 +76,15 @@ namespace cfr
 	FLVER2::Mesh::Mesh(UMEM* src, FLVER2* parent)
 	{
 		uread(&this->header,sizeof(Header),1,src);
+
+#ifdef VALIDATE_ALL
+		assertMsg(this->Header.unk01,"FLVER2::Mesh.Header.unk01 is not 0!\n");
+		assertMsg(this->Header.unk02,"FLVER2::Mesh.Header.unk02 is not 0!\n");
+		assertMsg(this->Header.unk03,"FLVER2::Mesh.Header.unk03 is not 0!\n");
+
+		assertMsg(this->Header.unk08,"FLVER2::Mesh.Header.unk08 is not 0!\n");
+		assertMsg(this->Header.unk0C,"FLVER2::Mesh.Header.unk0C is not 0!\n");
+#endif
 
 		long pos = utell(src);
 
@@ -125,6 +138,18 @@ namespace cfr
 	{
 		uread(&this->header,sizeof(Header),1,src);
 
+#ifdef VALIDATE_ALL
+		assertMsg(this->Header.unk08,"FLVER2::Member.Header.unk08 is not 0!\n");
+		assertMsg(this->Header.unk0C,"FLVER2::Member.Header.unk0C is not 0!\n");
+
+		assertMsg(this->Header.unk20,"FLVER2::Member.Header.unk20 is not 0!\n");
+		assertMsg(this->Header.unk24,"FLVER2::Member.Header.unk24 is not 0!\n");
+		assertMsg(this->Header.unk28,"FLVER2::Member.Header.unk28 is not 0!\n");
+		assertMsg(this->Header.unk2C,"FLVER2::Member.Header.unk2C is not 0!\n");
+
+		assertMsg(this->Header.unk3C == -1,"FLVER2::Member.Header.unk3C is not -1!\n");
+#endif
+
 		long pos = utell(src);
 
 		useek(src,startOffset+this->header.dataOffset,SEEK_SET);
@@ -141,6 +166,10 @@ namespace cfr
 		long pos = utell(src);
 
 		uread(&this->header,sizeof(Header),1,src);
+
+#ifdef VALIDATE_ALL
+		assertMsg(this->Header.unk08,"FLVER2::EdgeIndices.Header.unk08 is not 0!\n");
+#endif
 
 		for(int i = this->header.memberCount; i > 0; i--)
 		{
@@ -197,6 +226,11 @@ namespace cfr
 		uread(&this->header,sizeof(Header),1,src);
 		long dataSize = this->header.vertexCount*this->header.vertexSize;
 
+#ifdef VALIDATE_ALL
+		assertMsg(this->Header.unk10,"FLVER2::EdgeIndices.Header.unk10 is not 0!\n");
+		assertMsg(this->Header.unk14,"FLVER2::EdgeIndices.Header.unk14 is not 0!\n");
+#endif
+
 		if(this->header.unk10 == 0 && this->header.unk14 == 0)
 		{
 			long pos = utell(src);
@@ -212,6 +246,10 @@ namespace cfr
 	FLVER2::LayoutMember::LayoutMember(UMEM* src)
 	{
 		uread(this,sizeof(LayoutMember),1,src);
+
+#ifdef VALIDATE_ALL
+		//assertMsg(this->header.unk04,"FLVER2::LayoutMember.unk00 not from 0 to 2!\n");
+#endif
 	};
 
 	FLVER2::BufferLayout::BufferLayout(UMEM* src)
