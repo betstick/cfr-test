@@ -4,4 +4,5 @@
 #include "types/types.h"
 #include "math/math.h"
 #include "file/file.h"
-#include "validate/validate.h"
+#include "inflate/inflate.h"
+#include "endian/endian.h"

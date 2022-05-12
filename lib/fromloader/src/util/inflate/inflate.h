@@ -17,7 +17,7 @@
 
 namespace cfr
 {
-	File* decompress(File* file);
+	int inf(UMEM *source, UMEM *dest);
 };
 
 #endif

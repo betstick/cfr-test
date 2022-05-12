@@ -4,11 +4,11 @@ namespace cfr
 {
 	void assertMsg(int result, std::string message)
 	{
-		if(result == 0)
+		if(result != 0)
 		{
 			printf("%c",message.c_str());
 
-			exit(1);
+			throw std::runtime_error("Failed assertMsg()!\n");
 		}
 	};
 };

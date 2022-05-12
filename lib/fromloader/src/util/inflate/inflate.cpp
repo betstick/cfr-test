@@ -1,4 +1,4 @@
-#include "dcx.h"
+#include "inflate.h"
 
 namespace cfr
 {

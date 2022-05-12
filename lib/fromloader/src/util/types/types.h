@@ -47,6 +47,19 @@ namespace cfr
 		MS_DDS,
 	};
 
+	enum FROM_GAME
+	{
+		FG_DES,
+		FG_DS,
+		FG_DS2,
+		FG_DS2_SOTFS,
+		FB_BB,
+		FG_DS3,
+		FG_SEK,
+		FG_DSR,
+		FG_ER
+	};
+
 	//reads first few bytes of file to determine type
 	FILE_FORMAT getFormat(UMEM* src);
 };

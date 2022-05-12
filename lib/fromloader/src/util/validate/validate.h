@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <stdint.h>
 #include <string>
+#include <stdexcept>
 
 namespace cfr
 {
