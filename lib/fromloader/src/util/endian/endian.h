@@ -5,7 +5,7 @@
 
 namespace cfr
 {
-	unsigned int bitswap(unsigned int i);
+	//unsigned int bitswap(unsigned int i);
 
 	//unsigned long bitswap64(unsigned long i);
 

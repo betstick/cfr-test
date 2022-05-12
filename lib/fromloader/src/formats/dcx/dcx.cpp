@@ -87,11 +87,11 @@ namespace cfr
 		DCX_Header* h;
 		uread(h,sizeof(DCX_Header),1,src);
 
-		h->unk04 = bitswap(h->unk04);
-		h->unk10 = bitswap(h->unk10);
-		h->uncompressedSize = bitswap(h->uncompressedSize);
-		h->compressedSize   = bitswap(h->compressedSize  );
-		h->unk30 = bitswap(h->unk30);
+		h->unk04 = switchEndian(h->unk04);
+		h->unk10 = switchEndian(h->unk10);
+		h->uncompressedSize = switchEndian(h->uncompressedSize);
+		h->compressedSize   = switchEndian(h->compressedSize  );
+		h->unk30 = switchEndian(h->unk30);
 
 		if(memcmp(h->format,"EDGE",4) == 0)
 			throw std::runtime_error("EDGE compression not supported!\n");
