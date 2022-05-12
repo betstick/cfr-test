@@ -44,7 +44,7 @@ namespace cfr
 					gxItem->id != 0x7FFFFFFF && 
 					gxItem->id != 0xFFFFFFFF)
 				{
-					this->gxItems.insert(this->gxItems.end(),gxItem);
+					this->gxItems.push_back(gxItem);
 				}
 				else
 				{
@@ -96,7 +96,7 @@ namespace cfr
 			for(int i = this->header.boneCount; i > 0; i--)
 			{
 				uread(&boneIndex,sizeof(int32_t),1,src);
-				this->boneIndices.insert(this->boneIndices.end(),boneIndex);
+				this->boneIndices.push_back(boneIndex);
 			}
 		}
 
@@ -106,7 +106,7 @@ namespace cfr
 		for(int i = this->header.faceSetCount; i > 0; i--)
 		{
 			uread(&faceSetIndex,sizeof(int32_t),1,src);
-			this->faceSetIndices.insert(this->faceSetIndices.end(),faceSetIndex);
+			this->faceSetIndices.push_back(faceSetIndex);
 		}
 
 		useek(src,this->header.vertexBufferIndicesOffset,SEEK_SET);
@@ -115,7 +115,7 @@ namespace cfr
 		for(int i = this->header.vertexBufferCount; i > 0; i--)
 		{
 			uread(&vertBuffIndex,sizeof(int32_t),1,src);
-			this->vertexBufferIndices.insert(this->vertexBufferIndices.end(),vertBuffIndex);
+			this->vertexBufferIndices.push_back(vertBuffIndex);
 		}
 
 		useek(src,0,pos);
@@ -144,7 +144,7 @@ namespace cfr
 
 		for(int i = this->header.memberCount; i > 0; i--)
 		{
-			this->members.insert(this->members.end(),new Member(src,pos));
+			this->members.push_back(new Member(src,pos));
 		}
 	};
 
@@ -173,7 +173,7 @@ namespace cfr
 				for(int i = this->header.vertexIndexCount; i > 0; i--)
 				{
 					uread(&tmp,sizeof(uint16_t),1,src);
-					this->vertexIndicesShort.insert(this->vertexIndicesShort.end(),tmp);
+					this->vertexIndicesShort.push_back(tmp);
 				}
 			}
 			case(32):
@@ -182,7 +182,7 @@ namespace cfr
 				for(int i = this->header.vertexIndexCount; i > 0; i--)
 				{
 					uread(&tmp,sizeof(uint16_t),1,src);
-					this->vertexIndicesInt.insert(this->vertexIndicesInt.end(),tmp);
+					this->vertexIndicesInt.push_back(tmp);
 				}
 			}
 			default:
@@ -228,7 +228,7 @@ namespace cfr
 
 		for(int i = this->header.memberCount; i > 0; i--)
 		{
-			this->members.insert(this->members.end(),new LayoutMember(src));
+			this->members.push_back(new LayoutMember(src));
 		}
 
 		useek(src,pos,SEEK_SET);
@@ -264,6 +264,30 @@ namespace cfr
 
 	FLVER2::FLVER2(UMEM* src) : File(src)
 	{
+		this->header = Header(src);
 
+		for(int i = this->header.dummyCount; i > 0; i--)
+			this->dummies.push_back(Dummy(src));
+		
+		for(int i = this->header.materialCount; i > 0; i--)
+			this->materials.push_back(Material(src,this));
+		
+		for(int i = this->header.boneCount; i > 0; i--)
+			this->bones.push_back(Bone(src));
+
+		for(int i = this->header.meshCount; i > 0; i--)
+			this->meshes.push_back(Mesh(src,this));
+
+		for(int i = this->header.faceSetCount; i > 0; i--)
+			this->faceSets.push_back(FaceSet(src,this));
+
+		for(int i = this->header.vertexBufferCount; i > 0; i--)
+			this->vertexBuffers.push_back(VertexBuffer(src,this));
+
+		for(int i = this->header.bufferLayoutCount; i > 0; i--)
+			this->bufferLayouts.push_back(BufferLayout(src));
+
+		for(int i = this->header.textureCount; i > 0; i--)
+			this->textures.push_back(Texture(src));
 	};
 };

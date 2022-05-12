@@ -91,6 +91,7 @@ namespace cfr {
 			int32_t unk78 = 0; //assert(0)
 			int32_t unk7C = 0; //assert(0)
 
+			Header();
 			Header(UMEM* src);
 		};
 
