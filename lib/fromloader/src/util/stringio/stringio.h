@@ -7,6 +7,9 @@
 #include "../endian/endian.h"
 #include "umem.h"
 
+#ifndef CFR_STRINGS
+#define CFR_STRINGS
+
 namespace cfr
 {
 	//reads string till length or null term and returns it
@@ -24,3 +27,5 @@ namespace cfr
 
 	std::string readString(UMEM* src);
 };
+
+#endif

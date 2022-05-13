@@ -1,7 +1,10 @@
 #pragma once
 
-#include "umem.h"
 #include <stdexcept>
+#include "umem.h"
+
+#ifndef CFR_TYPES
+#define CFR_TYPES
 
 namespace cfr
 {
@@ -63,3 +66,5 @@ namespace cfr
 	//reads first few bytes of file to determine type
 	FILE_FORMAT getFormat(UMEM* src);
 };
+
+#endif

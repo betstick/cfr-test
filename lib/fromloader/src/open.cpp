@@ -26,20 +26,47 @@ namespace cfr
 		{
 			case FROM_DCX:
 				throw std::runtime_error("Found double compression?\n");
-			case FROM_BDF3:
-				return new BDF3(tmp);
-			case FROM_BDF4:
-				return new BDF4(tmp);
-			case FROM_BHD5_0:
-				return new BHD5_0(tmp);
-			case FROM_BHD5_1:
-				return new BHD5_1(tmp);
+			//case FROM_BDF3:
+			//	return new BDF3(tmp);
+			//case FROM_BDF4:
+			//	return new BDF4(tmp);
+			//case FROM_BHD5_0:
+			//	return new BHD5_0(tmp);
+			//case FROM_BHD5_1:
+			//	return new BHD5_1(tmp);
 			case FROM_BND3:
 				return new BND3(tmp);
-			case FROM_BND4:
-				return new BND4(tmp);
+			//case FROM_BND4:
+			//	return new BND4(tmp);
 			case UNKOWN_FORMAT:
 				return nullptr;
 		}
+
+		return nullptr;
+	};
+
+	// Note: data is COPIED to child. This will duplicate memory.
+	File* Binder::loadEntry(int index)
+	{
+		long totalSize = std::max(
+			this->entries[index].compressedSize,
+			this->entries[index].uncompressedSize
+		);
+
+		useek(this->data,this->entries[index].offset,SEEK_SET);
+
+		char* fileData = (char*)malloc(totalSize);
+		uread(fileData,totalSize,1,this->data);
+
+		//return to start to clean up
+		useek(this->data,0,SEEK_SET);
+
+		return OpenFile(fileData);
+
+		//create child and bind to parent
+		//File* file = new File(uopenMem(fileData,totalSize));
+		//this->newChild(file);
+
+		//return file;
 	};
 }

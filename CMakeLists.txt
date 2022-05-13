@@ -7,7 +7,13 @@ include(GNUInstallDirs)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 
-if(BUILD STREQUAL "debug")
+if(BUILD STREQUAL "release")
+	set(BUILD "release")
+	#optimize aggressively
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
+	message(STATUS "Using release mode...")
+else()
 	set(BUILD "debug")
 	#enable GDB and disable all optimizations
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb -O0 -g")
@@ -21,17 +27,13 @@ if(BUILD STREQUAL "debug")
 	add_compile_definitions(VMA_DEBUG_DETECT_CORRUPTION)
 	add_compile_definitions(VMA_DEBUG_MARGIN=1)
 	message(STATUS "Using debug mode...")
-else()
-	set(BUILD "release")
-	#optimize aggressively
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
-	message(STATUS "Using release mode...")
 endif()
 
 set(CMAKE_BINARY_DIR bin/)
 
 add_subdirectory(lib/cmem/)
-add_subdirectory(lib/cfromreader/)
+add_subdirectory(lib/umem/)
+#add_subdirectory(lib/cfromreader/)
+add_subdirectory(lib/fromloader/)
 
 add_subdirectory(src/)

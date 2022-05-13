@@ -2,6 +2,9 @@
 #include <errno.h>
 #include <stdlib.h>
 
+#ifndef CFR_IO
+#define CFR_IO
+
 namespace cfr
 {
 	//fopen() with extra validation and auto abort.
@@ -13,3 +16,5 @@ namespace cfr
 #endif
 	);
 };
+
+#endif

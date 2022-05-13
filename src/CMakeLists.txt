@@ -7,7 +7,8 @@ include_directories(${ZLIB_INCLUDE_DIR})
 include_directories(${ZLIB_INCLUDE_DIRS})
 
 include_directories(cmem)
-include_directories(cfr)
+include_directories(Umem)
+include_directories(frld)
 
 add_executable(cfr-test main.cpp)
 
@@ -15,4 +16,4 @@ set_target_properties ( cfr-test PROPERTIES
 	OUTPUT_NAME "cfr-test"
 	RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}" )
 
-target_link_libraries(cfr-test cfr cmem ZLIB::ZLIB)
+target_link_libraries(cfr-test frld umem cmem ZLIB::ZLIB)

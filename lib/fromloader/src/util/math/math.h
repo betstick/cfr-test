@@ -1,19 +1,24 @@
 #pragma once
 
+#ifndef CFR_MATH
+#define CFR_MATH
+
 namespace cfr
 {
-	typedef struct cfr_vec2
+	struct cfr_vec2
 	{
 		float x, y;
 	};
 
-	typedef struct cfr_vec3
+	struct cfr_vec3
 	{
 		float x, y, z;
 	};
 
-	typedef struct cfr_vec3
+	struct cfr_vec4
 	{
 		float x, y, z, w;
 	};
 };
+
+#endif

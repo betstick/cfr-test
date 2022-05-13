@@ -11,6 +11,8 @@ UMEM* uopenMem(char* src, size_t size)
 	umem->mem->eod = false;
 	umem->mem->err = false;
 
+	umem->isFile = false;
+
 	return umem;
 };
 
@@ -19,6 +21,8 @@ UMEM* uopenFile(const char* path, const char* mode)
 	UMEM* umem = (UMEM*)malloc(sizeof(UMEM));
 
 	umem->file = fopen(path,mode);
+
+	umem->isFile = true;
 
 	return umem;
 };
@@ -34,9 +38,9 @@ size_t uread(void* dest, size_t size, size_t count, UMEM* source)
 size_t uwrite(char* source, size_t size, size_t count, UMEM* dest)
 {
 	if(dest->isFile)
-		return fwrite(dest,size,count,dest->file);
+		return fwrite(source,size,count,dest->file);
 	else
-		return mwrite(dest,size,count,dest->mem );
+		return mwrite(source,size,count,dest->mem );
 };
 
 void useek(UMEM* umem, long offset, int whence)
@@ -70,7 +74,7 @@ char* utellptr(UMEM* umem)
 
 int ueod(UMEM* umem)
 {
-	return (eof(umem->file) || eod(umem->mem));
+	return (feof(umem->file) || meod(umem->mem));
 };
 
 int uerror(UMEM* umem)

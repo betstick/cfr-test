@@ -84,7 +84,7 @@ namespace cfr
 
 	UMEM* openDCX(UMEM* src)
 	{
-		DCX_Header* h;
+		DCX_Header* h = (DCX_Header*)malloc(sizeof(DCX_Header));
 		uread(h,sizeof(DCX_Header),1,src);
 
 		h->unk04 = switchEndian(h->unk04);

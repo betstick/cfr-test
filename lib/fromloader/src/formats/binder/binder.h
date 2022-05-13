@@ -1,5 +1,9 @@
+#ifndef CFR_BINDER
+#define CFR_BINDER
+
 #pragma once
 #include "../../util/file/file.h"
+//#include "../../open.h"
 
 namespace cfr
 {
@@ -46,8 +50,10 @@ namespace cfr
 		//will need mem to create the file i suppose? 
 		Binder(UMEM* src);
 		Binder(const char* path);
-		~Binder();
+		//~Binder();
 
 		//Binder(File file);
 	};
 };
+
+#endif

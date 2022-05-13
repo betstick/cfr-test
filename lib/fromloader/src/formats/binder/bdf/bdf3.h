@@ -1,6 +1,9 @@
 #pragma once
 #include "../binder.h"
 
+#ifndef CFR_BDF3
+#define CFR_BDF3
+
 namespace cfr
 {
 	class BDF3 : public Binder
@@ -8,12 +11,12 @@ namespace cfr
 		private:
 		class Header
 		{
-
+			int a;
 		};
 
 		class BDF3_Entry
 		{
-
+			int a;
 		};
 
 		Header header;
@@ -29,3 +32,5 @@ namespace cfr
 		~BDF3();
 	};
 };
+
+#endif

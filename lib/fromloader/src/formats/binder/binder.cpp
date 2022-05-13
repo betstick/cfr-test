@@ -25,7 +25,7 @@ namespace cfr
 	};
 
 	// Note: data is COPIED to child. This will duplicate memory.
-	File* Binder::loadEntry(int index)
+	/*File* Binder::loadEntry(int index)
 	{
 		long totalSize = std::max(
 			this->entries[index].compressedSize,
@@ -40,12 +40,14 @@ namespace cfr
 		//return to start to clean up
 		useek(this->data,0,SEEK_SET);
 
+		return OpenFile(fileData);
+
 		//create child and bind to parent
 		//File* file = new File(uopenMem(fileData,totalSize));
 		//this->newChild(file);
 
 		//return file;
-	};
+	};*/
 
 	File* Binder::loadFileName(std::string name)
 	{
@@ -62,6 +64,11 @@ namespace cfr
 	};
 
 	Binder::Binder(const char* path) : File(path)
+	{
+		//nothing should happen
+	};
+
+	Binder::Binder(UMEM* src) : File(src)
 	{
 		//nothing should happen
 	};

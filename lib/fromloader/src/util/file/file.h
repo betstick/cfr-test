@@ -1,3 +1,6 @@
+#ifndef CFR_FILE
+#define CFR_FILE
+
 #pragma once
 #include <stdio.h>
 #include <string>
@@ -8,9 +11,6 @@
 
 #include "../types/types.h"
 #include "umem.h"
-
-#ifndef __CFR_FILE
-#define __CFR_FILE
 
 namespace cfr
 {
@@ -32,7 +32,7 @@ namespace cfr
 		FILE_FORMAT getFormat();
 
 		//write to 
-		virtual UMEM* toBytes();
+		//virtual UMEM* toBytes();
 
 		//closes file unless there's children, returns how many
 		int close();

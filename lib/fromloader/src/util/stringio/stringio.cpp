@@ -40,7 +40,7 @@ namespace cfr
 		return ret;
 	};
 
-	std::string freadString(UMEM* src, bool nullTerm = true, int length = 0)
+	std::string freadString(UMEM* src, bool nullTerm, int length)
 	{
 		std::string ret = "";
 

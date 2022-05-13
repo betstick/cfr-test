@@ -44,6 +44,16 @@ namespace cfr
 		);
 	};*/
 
+	BND3::Header::Header()
+	{
+		//do nothing
+	};
+
+	BND3::Header::Header(UMEM* src)
+	{
+		uread(this,sizeof(Header),1,src);
+	};
+
 	BND3::BND3(const char* path) : Binder(path)
 	{
 		this->data = uopenFile(path,"rb");
@@ -52,14 +62,22 @@ namespace cfr
 
 	BND3::BND3(UMEM* src) : Binder(src)
 	{
-		//this->format = FROM_BND3;
+		this->format = FROM_BND3;
 		this->data = src;
 
 		long startPos = utell(src);
 
+		//confirm its not a DCX
+		char magic[4];
+		uread(magic,4,1,src);
+		useek(src,startPos,SEEK_SET);
+
+		if(strncmp(magic,"DCX\0",4) == 0)
+			this->data = openDCX(src);
+
 		this->header = Header(src);
 
-		uread(&this->header,sizeof(Header),1,src); 
+		//uread(&this->header,sizeof(Header),1,src); 
 
 		for(int32_t i = 0; i < this->header.fileCount; i++)
 		{

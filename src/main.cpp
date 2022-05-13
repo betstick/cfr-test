@@ -1,4 +1,5 @@
-#include "../lib/cfromreader/cfr.hpp"
+//#include "../lib/cfromreader/cfr.hpp"
+#include "../fromloader/fromloader.h"
 #include <signal.h>
 #include <errno.h>
 
@@ -6,7 +7,7 @@ using namespace cfr;
 
 int main()
 {
-	size_t size = 0;
+	/*size_t size = 0;
 	FILE* f = v_fopen("../DATA/c5370.chrbnd.dcx","rb");
 	char* rawbnd = openDCX(f,0,&size);
 	printf("size of uncompressed: %i\n",size);
@@ -22,5 +23,9 @@ int main()
 
 	printf("flver bone count: %i\n",flver->header->boneCount);
 
-	return 0;
+	return 0;*/
+
+	BND3* bnd = new BND3("../DATA/c5370.chrbnd.dcx");
+
+	printf("bnd entry 0 name: %s\n",bnd->entries[0].name.c_str());
 };

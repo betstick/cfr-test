@@ -6,8 +6,8 @@
 
 #include "umem.h"
 
-#ifndef __ENDIAN__
-#define __ENDIAN__
+#ifndef CFR_ENDIAN
+#define CFR_ENDIAN
 
 namespace cfr
 {

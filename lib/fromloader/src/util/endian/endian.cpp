@@ -30,24 +30,24 @@ namespace cfr
 					case(2):
 					{
 						uint16_t i = cfr_bswap16(*(uint16_t*)tmp);
-						memcpy(dest+(o*size),&i,sizeof(uint16_t));
+						memcpy((char*)dest+(o*size),&i,sizeof(uint16_t));
 					}
 					case(4):
 					{
 						uint32_t i = cfr_bswap32(*(uint32_t*)tmp);
-						memcpy(dest+(o*size),&i,sizeof(uint32_t));
+						memcpy((char*)dest+(o*size),&i,sizeof(uint32_t));
 					}
 					case(8):
 					{
 						uint64_t i = cfr_bswap64(*(uint64_t*)tmp);
-						memcpy(dest+(o*size),&i,sizeof(uint64_t));
+						memcpy((char*)dest+(o*size),&i,sizeof(uint64_t));
 					}
-					default: memcpy(dest+(o*size),tmp,size);
+					default: memcpy((char*)dest+(o*size),tmp,size);
 				}
 			}
 			else
 			{
-				memcpy(dest+(o*size),tmp,size);
+				memcpy((char*)dest+(o*size),tmp,size);
 			}
 
 			free(tmp);
@@ -56,7 +56,7 @@ namespace cfr
 		return c;
 	};
 
-	uint16_t switchEndian(uint16_t i, bool bigEndian = true)
+	uint16_t switchEndian(uint16_t i, bool bigEndian)
 	{
 		if(bigEndian)
 			return cfr_bswap16(i);
@@ -64,7 +64,7 @@ namespace cfr
 			return i;
 	};
 
-	int16_t switchEndian(int16_t i, bool bigEndian = true)
+	int16_t switchEndian(int16_t i, bool bigEndian)
 	{
 		if(bigEndian)
 			return cfr_bswap16(i);
@@ -72,7 +72,7 @@ namespace cfr
 			return i;
 	};
 
-	uint32_t switchEndian(uint32_t i, bool bigEndian = true)
+	uint32_t switchEndian(uint32_t i, bool bigEndian)
 	{
 		if(bigEndian)
 			return cfr_bswap32(i);
@@ -80,7 +80,7 @@ namespace cfr
 			return i;
 	};
 
-	int32_t switchEndian(int32_t i, bool bigEndian = true)
+	int32_t switchEndian(int32_t i, bool bigEndian)
 	{
 		if(bigEndian)
 			return cfr_bswap32(i);
@@ -88,7 +88,7 @@ namespace cfr
 			return i;
 	};
 
-	uint64_t switchEndian(uint64_t i, bool bigEndian = true)
+	uint64_t switchEndian(uint64_t i, bool bigEndian)
 	{
 		if(bigEndian)
 			return cfr_bswap64(i);
@@ -96,7 +96,7 @@ namespace cfr
 			return i;
 	};
 
-	int64_t switchEndian(int64_t i, bool bigEndian = true)
+	int64_t switchEndian(int64_t i, bool bigEndian)
 	{
 		if(bigEndian)
 			return cfr_bswap64(i);

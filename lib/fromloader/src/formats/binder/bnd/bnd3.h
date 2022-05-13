@@ -1,6 +1,11 @@
+#ifndef CFR_BND3
+#define CFR_BND3
+
 #pragma once
-#include "../../../util/include.h"
 #include "../binder.h"
+#include "../../../util/stringio/stringio.h"
+//#include
+#include "../../dcx/dcx.h"
 
 namespace cfr
 {
@@ -57,6 +62,8 @@ namespace cfr
 		BND3(UMEM* src);
 
 		private:
-		~BND3();
+		//~BND3();
 	};
 };
+
+#endif

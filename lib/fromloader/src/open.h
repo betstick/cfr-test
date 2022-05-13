@@ -1,9 +1,10 @@
-#pragma once
-#include "formats/include.h"
-#include "util/include.h"
+#ifndef CFR_OPEN_FILE
+#define CFR_OPEN_FILE
 
-#ifndef __OPEN_FILE
-#define __OPEN_FILE
+#pragma once
+#include "formats/binder/bnd/bnd3.h"
+#include "formats/dcx/dcx.h"
+#include "util/include.h"
 
 namespace cfr
 {

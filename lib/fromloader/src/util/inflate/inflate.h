@@ -3,8 +3,8 @@
 #include <zlib.h>
 #include <assert.h>
 
-#ifndef ZLIB_INF__
-#define ZLIB_INF__
+#ifndef CFR_ZLIB_INF
+#define CFR_ZLIB_INF
 
 //TODO: is this needed?
 #ifdef _WIN32
