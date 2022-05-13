@@ -23,7 +23,7 @@ namespace cfr
 		int uid; //unique id to aid in tracking
 		FILE_FORMAT format = UNKOWN_FORMAT;
 
-		//bool bigEndian = false; //figure out later
+		bool bigEndian = false; //figure out later
 		UMEM* data = nullptr;
 
 		public:

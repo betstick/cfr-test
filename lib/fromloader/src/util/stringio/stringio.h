@@ -1,9 +1,11 @@
 #pragma once
 #include <stdio.h>
 #include <string>
-#include "umem.h"
 #include <stdexcept>
 #include <stdbool.h>
+
+#include "../endian/endian.h"
+#include "umem.h"
 
 namespace cfr
 {
@@ -17,4 +19,8 @@ namespace cfr
 
 	//returns the file name and the path as a pair
 	std::pair<std::string,std::string> splitFullPath(std::string fullpath);
+
+	std::wstring readWString(UMEM* src, bool endian);
+
+	std::string readString(UMEM* src);
 };

@@ -2,6 +2,44 @@
 
 namespace cfr
 {
+	std::string readString(UMEM* src)
+	{
+		std::string ret;
+		bool nullFound = false;
+		char c = 'a';
+
+		while(nullFound == false)
+		{
+			uread(&c,sizeof(char),1,src);
+
+			if(c == '\0')
+				nullFound = true;
+			else
+				ret.push_back(c);
+		}
+
+		return ret;
+	};
+
+	std::wstring readWString(UMEM* src, bool endian)
+	{
+		std::wstring ret;
+		bool nullFound = false;
+		wchar_t c = 'a';
+
+		while(nullFound == false)
+		{
+			ureade(&c,sizeof(wchar_t),1,src,endian);
+
+			if(c == '\0')
+				nullFound = true;
+			else
+				ret.push_back(c);
+		}
+
+		return ret;
+	};
+
 	std::string freadString(UMEM* src, bool nullTerm = true, int length = 0)
 	{
 		std::string ret = "";
