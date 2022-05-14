@@ -2,7 +2,9 @@
 
 namespace cfr
 {
-	BND3::BND3_Entry::BND3_Entry(Header header, UMEM* src, long startPos)
+	void BND3init(BND3* b, UMEM* src);
+
+	BND3::BND3_Entry::BND3_Entry(Header* header, UMEM* src, long startPos)
 	{
 		uread(&this->rawFlags,sizeof(char),4,src);
 
@@ -11,15 +13,15 @@ namespace cfr
 		uread(&this->dataOffset,sizeof(uint32_t),1,src);
 
 		//file id
-		if(header.rawFormat & 0b01000000)
+		if(header->rawFormat & 0b01000000)
 			uread(&this->id,sizeof(int32_t),1,src);
 
 		//file name offset
-		if((header.rawFormat & 0b00100000) | (header.rawFormat & 0b00010000))
+		if((header->rawFormat & 0b00100000) | (header->rawFormat & 0b00010000))
 			uread(&this->nameOffset,4,1,src);
 
 		//file uncompressed size
-		if(header.rawFormat & 0b00000100)
+		if(header->rawFormat & 0b00000100)
 			uread(&this->uncompressedSize,sizeof(int32_t),1,src);
 	};
 
@@ -52,58 +54,72 @@ namespace cfr
 	BND3::Header::Header(UMEM* src)
 	{
 		uread(this,sizeof(Header),1,src);
+
+		if(strncmp(this->magic,"BND3",4) != 0)
+			throw std::runtime_error("Failed BND3 magic!\n");
+
+		if(this->unk1C != 0)
+			throw std::runtime_error("AAAAAAAAA\n");
 	};
 
 	BND3::BND3(const char* path) : Binder(path)
 	{
-		this->data = uopenFile(path,"rb");
-		BND3(this->data);
+		UMEM* src = uopenFile(path,"rb");
+		BND3init(this,src);
 	};
 
 	BND3::BND3(UMEM* src) : Binder(src)
 	{
-		this->format = FROM_BND3;
-		this->data = src;
+		BND3init(this,src);
+	};
 
-		long startPos = utell(src);
+	void BND3init(BND3* b, UMEM* src)
+	{
+		b->format = FROM_BND3;
 
 		//confirm its not a DCX
 		char magic[4];
 		uread(magic,4,1,src);
-		useek(src,startPos,SEEK_SET);
+		useek(src,0,SEEK_SET);
 
-		if(strncmp(magic,"DCX\0",4) == 0)
-			this->data = openDCX(src);
-
-		this->header = Header(src);
-
-		//uread(&this->header,sizeof(Header),1,src); 
-
-		for(int32_t i = 0; i < this->header.fileCount; i++)
+		if(strncmp(magic,"DCX",3) == 0)
 		{
-			BND3_Entry* bndEntry = new BND3_Entry(this->header,src,startPos);
-			this->internalEntries.push_back(*bndEntry);
+			b->data = openDCX(src);
+			uclose(src);
+		}
+		else
+			b->data = src;
 
-			long position = utell(src);
+		useek(b->data,0,SEEK_SET);
+
+		b->header = new BND3::Header(b->data);
+
+		for(int32_t i = 0; i < b->header->fileCount; i++)
+		{
+			BND3::BND3_Entry* bndEntry = new BND3::BND3_Entry(b->header,b->data,0);
+			b->internalEntries.push_back(bndEntry);
+
+			long position = utell(b->data);
 			
-			useek(src,bndEntry->nameOffset+startPos,SEEK_CUR);
+			useek(b->data,bndEntry->nameOffset,SEEK_SET);
 
-			std::string fullpath = freadString(src);
+			std::string fullpath = freadString(b->data);
 
-			std::pair<std::string, std::string> pathName = splitFullPath(fullpath);
+			//std::pair<std::string, std::string> pathName = splitFullPath(fullpath);
 
-			useek(src,position,SEEK_SET);
+			useek(b->data,position,SEEK_SET);
 
-			this->entries.push_back(Entry(
-				pathName.first, pathName.second,
-				bndEntry->dataOffset+startPos,
-				bndEntry->compressedSize,
-				bndEntry->uncompressedSize,
-				bndEntry->id				
-			));
+			long edo = bndEntry->dataOffset;
+			long ecs = bndEntry->compressedSize;
+			long eus = bndEntry->uncompressedSize;
+			long eid = bndEntry->id;
+
+			Entry* entry = new Entry("FIXME","LATER",edo,ecs,eus,eid);
+
+			b->entries.push_back(entry);
 		}
 
 		//return to start, cleaned up
-		useek(this->data,0,SEEK_SET);
+		useek(b->data,0,SEEK_SET);
 	};
 };

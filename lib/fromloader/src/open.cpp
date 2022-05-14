@@ -49,11 +49,11 @@ namespace cfr
 	File* Binder::loadEntry(int index)
 	{
 		long totalSize = std::max(
-			this->entries[index].compressedSize,
-			this->entries[index].uncompressedSize
+			this->entries[index]->compressedSize,
+			this->entries[index]->uncompressedSize
 		);
 
-		useek(this->data,this->entries[index].offset,SEEK_SET);
+		useek(this->data,this->entries[index]->offset,SEEK_SET);
 
 		char* fileData = (char*)malloc(totalSize);
 		uread(fileData,totalSize,1,this->data);

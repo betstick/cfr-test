@@ -87,11 +87,15 @@ namespace cfr
 		DCX_Header* h = (DCX_Header*)malloc(sizeof(DCX_Header));
 		uread(h,sizeof(DCX_Header),1,src);
 
-		h->unk04 = switchEndian(h->unk04);
-		h->unk10 = switchEndian(h->unk10);
-		h->uncompressedSize = switchEndian(h->uncompressedSize);
-		h->compressedSize   = switchEndian(h->compressedSize  );
-		h->unk30 = switchEndian(h->unk30);
+#ifdef VALIDATE_ALL
+		assertMsg(strncmp(h->magic,"DCX\0",4) == 1,"DCX wrong magic bytes!\n");
+#endif
+
+		h->unk04 = switchEndian(h->unk04,true);
+		h->unk10 = switchEndian(h->unk10,true);
+		h->uncompressedSize = switchEndian(h->uncompressedSize,true);
+		h->compressedSize   = switchEndian(h->compressedSize  ,true);
+		h->unk30 = switchEndian(h->unk30,true);
 
 		if(memcmp(h->format,"EDGE",4) == 0)
 			throw std::runtime_error("EDGE compression not supported!\n");
@@ -99,6 +103,7 @@ namespace cfr
 		//call correct decompression util and copy output into dest
 		char* data = (char*)malloc(h->uncompressedSize);
 		UMEM* dst  = uopenMem(data,h->uncompressedSize);
+		useek(dst,0,SEEK_SET);
 		_DCX_TYPE_ type;
 
 		if(memcmp(h->magic,"DCP\0",4) == 0)
@@ -170,7 +175,7 @@ namespace cfr
 
 		//is closing the src good?
 		//uclose(src);
-		delete h; //probably good to do this?
+		//delete h; //probably good to do this?
 
 		return dst;
 	};
@@ -197,7 +202,7 @@ namespace cfr
 
 	int decompress_dcx_dflt(UMEM* src, UMEM* dest, _DCX_TYPE_ type)
 	{
-		useek(src,4,SEEK_CUR); //skip to beginning of dlft data
+		//useek(src,4,SEEK_CUR); //skip to beginning of dlft data
 		int ret = inf(src,dest);
 
 		if(uerror(src))
@@ -205,7 +210,6 @@ namespace cfr
 
 		if(ret != 0)
 		{
-			printf("inflate ret: %i\n", ret);
 			throw std::runtime_error("Failed to inflate DCX DFLT file!\n");
 		}
 

@@ -74,12 +74,18 @@ char* utellptr(UMEM* umem)
 
 int ueod(UMEM* umem)
 {
-	return (feof(umem->file) || meod(umem->mem));
+	if(umem->isFile)
+		return feof(umem->file);
+	else
+		return meod(umem->mem );
 };
 
 int uerror(UMEM* umem)
 {
-	return (ferror(umem->file) || merror(umem->mem));
+	if(umem->isFile)
+		return ferror(umem->file);
+	else
+		return merror(umem->mem );
 };
 
 char ugetc(UMEM* umem)

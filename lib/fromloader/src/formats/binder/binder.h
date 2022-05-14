@@ -30,7 +30,7 @@ namespace cfr
 	class Binder : public File
 	{
 		public:
-		std::vector<Entry> entries = {};
+		std::vector<Entry*> entries = {};
 
 		File* loadEntry(int index);
 
