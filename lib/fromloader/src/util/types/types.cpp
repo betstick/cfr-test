@@ -43,7 +43,7 @@ namespace cfr
 			return FROM_EMEVD;
 		else if(false)
 			return FROM_FFX;
-		else if(memcmp(magicBytes,"FLVER0",6) == 0)
+		else if(memcmp(magicBytes,"FLVER0",6) == 0) //this will never trigger
 			return FROM_FLVER0;
 		else if(memcmp(magicBytes,"FLVER\0",6) == 0)
 			return FROM_FLVER2;
@@ -105,6 +105,8 @@ namespace cfr
 			return MS_DDS;
 		else
 		{
+			printf("Found type: ");
+
 			for(int i = 0; i < 20; i++)
 				printf("%c",magicBytes[i]);
 

@@ -356,8 +356,6 @@ namespace cfr
 		for(int i = this->header.textureCount; i > 0; i--)
 			this->textures.push_back(new Texture(src));
 
-		printf("bone count: %i\n",this->bones.size());
-
 		useek(src,0,SEEK_SET);
 	};
 };
