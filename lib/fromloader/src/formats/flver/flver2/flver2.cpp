@@ -5,12 +5,14 @@
 
 namespace cfr
 {
+	FLVER2::Header::Header(){};
+
 	FLVER2::Header::Header(UMEM* src)
 	{
 		uread(this,sizeof(FLVER2::Header),1,src);
 
 #ifdef VALIDATE_ALL
-		if(memcmp(this->magic,"FLVER2",6) != 0)
+		if(strncmp(this->magic,"FLVER\0",6) != 0)
 			throw std::runtime_error("Failed to validate FLVER2!\n");
 #endif
 	};
@@ -32,7 +34,7 @@ namespace cfr
 		if(this->header.gxOffset != 0)
 		{
 			long start = utell(src);
-			useek(src,this->header.gxOffset,SEEK_CUR);
+			useek(src,this->header.gxOffset,SEEK_SET);
 
 			bool good = true;
 
@@ -65,7 +67,7 @@ namespace cfr
 #endif
 
 		if(this->length > 12)
-			uread(this->data,this->length-(sizeof(int32_t)*3),1,src);
+			uread(this->data,this->length-12,1,src);
 	};
 
 	FLVER2::Bone::Bone(UMEM* src)
@@ -90,6 +92,7 @@ namespace cfr
 
 		if(this->header.boundingBoxOffset != 0)
 		{
+			useek(src,this->header.boundingBoxOffset,SEEK_SET);
 			uread(&this->boundingBoxMin,sizeof(cfr_vec3),2,src);
 
 			if(parent->header.version >= 0x2001A)
@@ -131,7 +134,7 @@ namespace cfr
 			this->vertexBufferIndices.push_back(vertBuffIndex);
 		}
 
-		useek(src,0,pos);
+		useek(src,pos,SEEK_SET);
 	};
 
 	FLVER2::Member::Member(UMEM* src, long startOffset)
@@ -192,11 +195,13 @@ namespace cfr
 		long pos = utell(src);
 		useek(src,parent->header.dataOffset + this->header.vertexIndicesOffset,SEEK_SET);
 
-		switch(this->vertexSize)
+		/*switch(this->vertexSize)
 		{
-			case(8):
-				this->vertexIndicesEdge = EdgeIndices(src);
-			case(16):
+			case  8:
+			{
+				this->vertexIndicesEdge = new EdgeIndices(src);
+			}
+			case 16:
 			{
 				uint16_t tmp = 0;
 				for(int i = this->header.vertexIndexCount; i > 0; i--)
@@ -205,7 +210,7 @@ namespace cfr
 					this->vertexIndicesShort.push_back(tmp);
 				}
 			}
-			case(32):
+			case 32:
 			{
 				uint32_t tmp = 0;
 				for(int i = this->header.vertexIndexCount; i > 0; i--)
@@ -215,7 +220,27 @@ namespace cfr
 				}
 			}
 			default:
+			{
 				throw std::runtime_error("FLVER2::FaceSet.VertexSize is unkown!\n");
+			}
+		}*/
+
+		if(this->vertexSize == 8)
+		{
+			throw std::runtime_error("FLVER2::FaceSet.VertexSize not implemented (8)!\n");
+		}
+		else if(this->vertexSize == 16)
+		{
+			uint16_t tmp = 0;
+			for(int i = this->header.vertexIndexCount; i > 0; i--)
+			{
+				uread(&tmp,sizeof(uint16_t),1,src);
+				this->vertexIndicesShort.push_back(tmp);
+			}
+		}
+		else if(this->vertexSize == 32)
+		{
+			throw std::runtime_error("FLVER2::FaceSet.VertexSize not implemented (32)!\n");
 		}
 
 		useek(src,pos,SEEK_SET);
@@ -302,30 +327,37 @@ namespace cfr
 
 	FLVER2::FLVER2(UMEM* src) : File(src)
 	{
+		useek(src,0,SEEK_SET);
+
 		this->header = Header(src);
+		this->data = src;
 
 		for(int i = this->header.dummyCount; i > 0; i--)
-			this->dummies.push_back(Dummy(src));
+			this->dummies.push_back(new Dummy(src));
 		
 		for(int i = this->header.materialCount; i > 0; i--)
-			this->materials.push_back(Material(src,this));
+			this->materials.push_back(new Material(src,this));
 		
 		for(int i = this->header.boneCount; i > 0; i--)
-			this->bones.push_back(Bone(src));
+			this->bones.push_back(new Bone(src));
 
 		for(int i = this->header.meshCount; i > 0; i--)
-			this->meshes.push_back(Mesh(src,this));
+			this->meshes.push_back(new Mesh(src,this));
 
 		for(int i = this->header.faceSetCount; i > 0; i--)
-			this->faceSets.push_back(FaceSet(src,this));
+			this->faceSets.push_back(new FaceSet(src,this));
 
 		for(int i = this->header.vertexBufferCount; i > 0; i--)
-			this->vertexBuffers.push_back(VertexBuffer(src,this));
+			this->vertexBuffers.push_back(new VertexBuffer(src,this));
 
 		for(int i = this->header.bufferLayoutCount; i > 0; i--)
-			this->bufferLayouts.push_back(BufferLayout(src));
+			this->bufferLayouts.push_back(new BufferLayout(src));
 
 		for(int i = this->header.textureCount; i > 0; i--)
-			this->textures.push_back(Texture(src));
+			this->textures.push_back(new Texture(src));
+
+		printf("bone count: %i\n",this->bones.size());
+
+		useek(src,0,SEEK_SET);
 	};
 };

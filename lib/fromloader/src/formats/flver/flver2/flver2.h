@@ -175,10 +175,11 @@ namespace cfr {
 
 			cfr_vec3 boundingBoxMin = {0.0f,0.0f,0.0f};
 			
-			int32_t unk3C;
+			int32_t unk3C = 0;
 
 			cfr_vec3 boundingBoxMax = {0.0f,0.0f,0.0f};
 			
+			// 13 * 4 bytes of space
 			char emptyJunk[52]; //potentially needed for spacing :/
 
 			Bone(UMEM* src);
@@ -189,11 +190,11 @@ namespace cfr {
 			public:
 			struct Header
 			{
-				bool dynamic; 
+				int8_t dynamic; // 0 or 1
 		
-				char unk01; //assert(0)
-				char unk02; //assert(0)
-				char unk03; //assert(0)
+				int8_t unk01; //assert(0)
+				int8_t unk02; //assert(0)
+				int8_t unk03; //assert(0)
 				
 				int32_t materialIndex;
 				
@@ -202,6 +203,7 @@ namespace cfr {
 				
 				int32_t defaultBoneIndex;
 				int32_t boneCount;
+
 				uint32_t boundingBoxOffset = 0;
 				uint32_t boneIndicesOffset = 0;
 				
@@ -311,7 +313,7 @@ namespace cfr {
 			
 			Header header;
 			VertInfo vertInfo;
-			EdgeIndices vertexIndicesEdge = nullptr;
+			EdgeIndices* vertexIndicesEdge = nullptr;
 			std::vector<uint16_t> vertexIndicesShort = {}; //vertexindexcount
 			std::vector<uint32_t> vertexIndicesInt = {}; //vertexindexcount
 			int vertexSize = 0; //more accurate
@@ -416,14 +418,14 @@ namespace cfr {
 		};
 
 		Header header;
-		std::vector<Dummy> dummies;
-		std::vector<Material> materials;
-		std::vector<Bone> bones;
-		std::vector<Mesh> meshes;
-		std::vector<FaceSet> faceSets;
-		std::vector<VertexBuffer> vertexBuffers;
-		std::vector<BufferLayout> bufferLayouts;
-		std::vector<Texture> textures;
+		std::vector<Dummy*> dummies;
+		std::vector<Material*> materials;
+		std::vector<Bone*> bones;
+		std::vector<Mesh*> meshes;
+		std::vector<FaceSet*> faceSets;
+		std::vector<VertexBuffer*> vertexBuffers;
+		std::vector<BufferLayout*> bufferLayouts;
+		std::vector<Texture*> textures;
 
 		FLVER2(const char* path);
 		FLVER2(UMEM* src);

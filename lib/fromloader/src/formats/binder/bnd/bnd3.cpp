@@ -59,7 +59,7 @@ namespace cfr
 			throw std::runtime_error("Failed BND3 magic!\n");
 
 		if(this->unk1C != 0)
-			throw std::runtime_error("AAAAAAAAA\n");
+			throw std::runtime_error("Failed BND3 unk1C!\n");
 	};
 
 	BND3::BND3(const char* path) : Binder(path)

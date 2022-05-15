@@ -4,12 +4,11 @@ namespace cfr
 {
 	FILE_FORMAT getFormat(UMEM* src)
 	{
-		long start = utell(src);
+		useek(src,0,SEEK_SET);
 		char magicBytes[20];
 		int32_t bhd5_buckets = 0;
 		uread(magicBytes,20,1,src);
-		uread(magicBytes, 4,1,src);
-		useek(src,start,SEEK_SET);
+		useek(src,0,SEEK_SET);
 
 		if(memcmp(magicBytes,"BDF3",4) == 0)
 			return FROM_BDF3;
@@ -46,7 +45,7 @@ namespace cfr
 			return FROM_FFX;
 		else if(memcmp(magicBytes,"FLVER0",6) == 0)
 			return FROM_FLVER0;
-		else if(memcmp(magicBytes,"FLVER2",6) == 0)
+		else if(memcmp(magicBytes,"FLVER\0",6) == 0)
 			return FROM_FLVER2;
 		else if(false)
 			return FROM_FSB;
@@ -106,6 +105,10 @@ namespace cfr
 			return MS_DDS;
 		else
 		{
+			for(int i = 0; i < 20; i++)
+				printf("%c",magicBytes[i]);
+
+			printf("\n");
 			return UNKOWN_FORMAT;
 		}
 	};

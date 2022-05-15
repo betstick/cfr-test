@@ -37,4 +37,8 @@ int main()
 	printf("bnd filecount: %i\n",bnd->header->fileCount);
 	printf("bnd entry count: %i\n",bnd->entries.size());
 	printf("bnd ientry count: %i\n",bnd->internalEntries.size());
+
+	FLVER2* flver = (FLVER2*)bnd->loadEntry(0);
+
+	printf("flver bone count: %i\n",flver->bones.size());
 };

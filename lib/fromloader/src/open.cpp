@@ -22,6 +22,8 @@ namespace cfr
 		if(format == FROM_DCX)
 			tmp = openDCX(src);
 
+		useek(src,0,SEEK_SET);
+
 		switch(format)
 		{
 			case FROM_DCX:
@@ -36,10 +38,12 @@ namespace cfr
 			//	return new BHD5_1(tmp);
 			case FROM_BND3:
 				return new BND3(tmp);
+			case FROM_FLVER2:
+				return new FLVER2(tmp);
 			//case FROM_BND4:
 			//	return new BND4(tmp);
 			case UNKOWN_FORMAT:
-				return nullptr;
+				throw std::runtime_error("Unkown format!\n");
 		}
 
 		return nullptr;
@@ -61,7 +65,10 @@ namespace cfr
 		//return to start to clean up
 		useek(this->data,0,SEEK_SET);
 
-		return OpenFile(fileData);
+		UMEM* umem = uopenMem(fileData,totalSize);
+		useek(umem,0,SEEK_SET);
+
+		return OpenFile(umem);
 
 		//create child and bind to parent
 		//File* file = new File(uopenMem(fileData,totalSize));

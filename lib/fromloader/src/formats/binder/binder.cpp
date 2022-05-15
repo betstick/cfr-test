@@ -2,19 +2,6 @@
 
 namespace cfr
 {
-	/*Entry::Entry(
-		std::string name, std::string path, long offset, 
-		long compressedSize, long uncompressedSize, long id
-	)
-	{
-		this->name = name;
-		this->path = path;
-		this->offset = offset;
-		this->compressedSize = compressedSize;
-		this->uncompressedSize = uncompressedSize;
-		this->id = id;
-	};*/
-
 	Entry::Entry(
 		std::string name, std::string path, long offset, 
 		long compressedSize, long uncompressedSize, long id
