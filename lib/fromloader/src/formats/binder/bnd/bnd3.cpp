@@ -2,8 +2,6 @@
 
 namespace cfr
 {
-	void BND3init(BND3* b, UMEM* src);
-
 	BND3::BND3_Entry::BND3_Entry(Header* header, UMEM* src, long startPos)
 	{
 		uread(&this->rawFlags,sizeof(char),4,src);
@@ -73,7 +71,7 @@ namespace cfr
 		BND3init(this,src);
 	};
 
-	void BND3init(BND3* b, UMEM* src)
+	void BND3::BND3init(BND3* b, UMEM* src)
 	{
 		b->format = FROM_BND3;
 

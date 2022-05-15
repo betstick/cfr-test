@@ -11,7 +11,7 @@ namespace cfr
 {
 	class BND3 : public Binder
 	{
-		public:
+		protected:
 		//fill whole struct
 		class Header
 		{
@@ -55,18 +55,18 @@ namespace cfr
 			//Entry* newEntry(UMEM* src, int startPos);
 		};
 
-		public:
+		//public:
 		Header* header = nullptr;
 		std::vector<BND3_Entry*> internalEntries = {};
-		//std::vector<Entry*> entries = {};
 
-		//public:		
+		public:		
 		//init from path
 		BND3(const char* path);
 
 		BND3(UMEM* src);
 
 		private:
+		void BND3init(BND3* b, UMEM* src);
 		//~BND3();
 	};
 };

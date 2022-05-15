@@ -33,10 +33,10 @@ int main()
 
 	//printf("bnd entry 0 name: %s\n",bnd->entries[0].name.c_str());
 	
-	printf("bnd magic: %c\n",bnd->header->magic[0]);
-	printf("bnd filecount: %i\n",bnd->header->fileCount);
+	//printf("bnd magic: %c\n",bnd->header->magic[0]);
+	//printf("bnd filecount: %i\n",bnd->header->fileCount);
 	printf("bnd entry count: %i\n",bnd->entries.size());
-	printf("bnd ientry count: %i\n",bnd->internalEntries.size());
+	//printf("bnd ientry count: %i\n",bnd->internalEntries.size());
 
 	FLVER2* flver = (FLVER2*)bnd->loadEntry(0);
 

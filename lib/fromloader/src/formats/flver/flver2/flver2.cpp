@@ -1,7 +1,6 @@
 #include "flver2.h"
 
-//there has to be a more sane, but still memory saving, way to do this.
-//this isn't compute or memory intensive... but just look at it! its spaghetti!
+//this method isn't that friendly to performance, but its reasonably clean.
 
 namespace cfr
 {
@@ -325,37 +324,49 @@ namespace cfr
 #endif
 	};
 
+	void initFLVER2(FLVER2* f, UMEM* src);
+
+	FLVER2::FLVER2(const char* path) : File(path)
+	{
+		UMEM* src = uopenFile(path,"rb");
+		initFLVER2(this,src);
+	};
+
 	FLVER2::FLVER2(UMEM* src) : File(src)
 	{
 		useek(src,0,SEEK_SET);
+		initFLVER2(this,src);
+	};
 
-		this->header = Header(src);
-		this->data = src;
+	void initFLVER2(FLVER2* f, UMEM* src)
+	{
+		f->data = src;
+		f->header = FLVER2::Header(f->data);
 
-		for(int i = this->header.dummyCount; i > 0; i--)
-			this->dummies.push_back(new Dummy(src));
+		for(int i = f->header.dummyCount; i > 0; i--)
+			f->dummies.push_back(new FLVER2::Dummy(f->data));
 		
-		for(int i = this->header.materialCount; i > 0; i--)
-			this->materials.push_back(new Material(src,this));
+		for(int i = f->header.materialCount; i > 0; i--)
+			f->materials.push_back(new FLVER2::Material(f->data,f));
 		
-		for(int i = this->header.boneCount; i > 0; i--)
-			this->bones.push_back(new Bone(src));
+		for(int i = f->header.boneCount; i > 0; i--)
+			f->bones.push_back(new FLVER2::Bone(f->data));
 
-		for(int i = this->header.meshCount; i > 0; i--)
-			this->meshes.push_back(new Mesh(src,this));
+		for(int i = f->header.meshCount; i > 0; i--)
+			f->meshes.push_back(new FLVER2::Mesh(f->data,f));
 
-		for(int i = this->header.faceSetCount; i > 0; i--)
-			this->faceSets.push_back(new FaceSet(src,this));
+		for(int i = f->header.faceSetCount; i > 0; i--)
+			f->faceSets.push_back(new FLVER2::FaceSet(f->data,f));
 
-		for(int i = this->header.vertexBufferCount; i > 0; i--)
-			this->vertexBuffers.push_back(new VertexBuffer(src,this));
+		for(int i = f->header.vertexBufferCount; i > 0; i--)
+			f->vertexBuffers.push_back(new FLVER2::VertexBuffer(f->data,f));
 
-		for(int i = this->header.bufferLayoutCount; i > 0; i--)
-			this->bufferLayouts.push_back(new BufferLayout(src));
+		for(int i = f->header.bufferLayoutCount; i > 0; i--)
+			f->bufferLayouts.push_back(new FLVER2::BufferLayout(f->data));
 
-		for(int i = this->header.textureCount; i > 0; i--)
-			this->textures.push_back(new Texture(src));
+		for(int i = f->header.textureCount; i > 0; i--)
+			f->textures.push_back(new FLVER2::Texture(f->data));
 
-		useek(src,0,SEEK_SET);
+		useek(f->data,0,SEEK_SET);
 	};
 };
